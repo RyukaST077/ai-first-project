@@ -6,48 +6,71 @@ last_updated: "YYYY-MM-DD"
 ---
 
 # 1. 概要
-本ドキュメントは、プロジェクト全体のデータベース設計のインデックスである。
-詳細なテーブル定義は、ドメインごとの分割ファイルを参照すること。
+本ドキュメントは、プロジェクト全体のデータベース設計のインデックス、および共通の設計方針を定義する。
+詳細なデータモデルは、各ドメイン定義書を参照すること。
 
 # 2. ドメイン構成一覧
-
-大規模化に伴い、DB設計を以下のドメイン（サブシステム）単位で管理する。
+以下にプロジェクトのドメイン構成を記載する。
 
 | No | ドメイン名 | ファイルリンク | 概要 |
 |---|---|---|---|
-| 1 | Users | [01_users.md](./domains/01_users.md) | ユーザー、認証、プロフィール |
-| 2 | Orders | [02_orders.md](./domains/02_orders.md) | 注文、決済、配送 |
-| 3 | Products | [03_products.md](./domains/03_products.md) | 商品カタログ、在庫 |
-| ... | ... | ... | ... |
+| 1 | (Example) | [00_domain_template.md](./domains/00_domain_template.md) | (ドメインの説明) |
+| 2 | ... | ... | ... |
 
-# 3. 全体ER図 (High Level)
-各ドメイン間の主要なリレーションのみを記載する。詳細は各ドメイン定義書を参照。
+# 3. テクノロジースタック
+プロジェクトで使用するデータベースおよび関連技術を選定・記載すること。
 
-```mermaid
-erDiagram
-    Users ||--o{ Orders : "places"
-    Orders ||--|{ OrderItems : "contains"
-    Products ||--o{ OrderItems : "included_in"
-```
+| 役割 | 技術 | バージョン | 用途 |
+|---|---|---|---|
+| **メインDB** | (例: PostgreSQL, MySQL) | x.x | メイントランザクションデータ |
+| **NoSQL / キャッシュ** | (例: Redis, DynamoDB) | x.x | セッション管理, 高頻度アクセスデータ |
+| **検索エンジン** | (例: Elasticsearch) | x.x | 全文検索, ログ分析 |
+| **マイグレーションツール** | (例: Flyway, Prisma) | - | スキーマ管理 |
 
 # 4. 共通設計方針
 
 ## 4.1 命名規則
-- テーブル名: 英複数形 (スネークケース) 例: `users`, `order_items`
-- カラム名: 英小文字 (スネークケース) 例: `user_id`, `created_at`
-- PK: `id` (BIGINT)
-- FK: `[table_singular]_id`
+一貫性を保つためのルールを定義する。以下は推奨例である。
 
-## 4.2 共通カラム定義
-全テーブルに以下の監査カラムを付与することを推奨する。
+*   **RDBMS (SQL)**
+    *   テーブル: `snake_case` (複数形) 例: `users`, `order_items`
+    *   カラム: `snake_case` 例: `user_id`, `created_at`
+*   **NoSQL (ドキュメント)**
+    *   コレクション: `camelCase` または `snake_case`
+    *   フィールド: `camelCase` (JSON標準) 例: `userId`, `createdAt`
 
-| 論理名 | 物理名 | 型 | NULL | デフォルト | 備考 |
-|---|---|---|---|---|---|
-| 作成日時 | created_at | TIMESTAMP | No | CURRENT_TIMESTAMP | - |
-| 更新日時 | updated_at | TIMESTAMP | No | CURRENT_TIMESTAMP | - |
+## 4.2 ID設計
+使用するID生成戦略を明確にすること。
 
-## 4.3 データ保存ポリシー (Retention Policy)
-各ドメインで個別定義がない限り、以下を適用する。
-- バックアップ頻度: 1日1回
-- 保持期間: 永久
-- 削除方針: 論理削除を基本とする（ `deleted_at` カラムの利用など要検討）
+*   **サロゲートキー**: `AUTO_INCREMENT` / `SERIAL` (BIGINT)
+*   **分散ID**: UUID (v4/v7), ULID, Snowflake, NanoID
+*   **ナチュラルキー**: 業務コードをPKとする場合（基本は非推奨）
+
+## 4.3 監査・共通カラム
+全テーブル/ドキュメントに付与すべき共通フィールド。
+
+| 項目 | SQL例 | NoSQL例 | 必須 | 備考 |
+|---|---|---|---|---|
+| 作成日時 | `created_at` | `createdAt` | Yes | - |
+| 更新日時 | `updated_at` | `updatedAt` | Yes | - |
+| 作成者 | `created_by` | `createdBy` | Option | システムUser IDなど |
+| 更新者 | `updated_by` | `updatedBy` | Option | - |
+| バージョン | `lock_version` | `version` | Option | 楽観ロック用 |
+
+## 4.4 文字コード・タイムゾーン
+*   **文字セット**: `UTF-8` (utf8mb4) を基本とする。
+*   **照合順序 (Collation)**: `utf8mb4_0900_ai_ci` (MySQL 8.0+) 等、要件に合わせて定義。
+*   **タイムゾーン**: 原則 `UTC` で保存し、アプリケーション層でJST等へ変換することを推奨。
+
+# 5. セキュリティ・アクセス制御
+*   **接続ユーザー権限**: アプリケーション用ユーザーには必要最小限の権限（CRUDのみ、DDL不可など）を付与する。
+*   **行レベルセキュリティ (RLS)**: マルチテナント要件がある場合、RLSの採用を検討する。
+*   **暗号化**: 機密情報（パスワード、PII）はアプリケーション側で暗号化、またはDBの透過的暗号化機能を利用する。
+
+# 6. バックアップ・保守
+*   **バックアップ頻度**: (例: 日次フルバックアップ + WALアーカイブ)
+*   **保持期間**: (例: 30日間)
+*   **削除方針**:
+    *   物理削除: 個人情報などで完全削除が必要な場合。
+    *   論理削除: `deleted_at` カラム等の利用。一意制約との兼ね合いに注意。
+
