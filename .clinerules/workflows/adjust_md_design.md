@@ -29,13 +29,12 @@
 
 # 最重要の分割要件（必ず守る）
 - DB設計は分割して書く：
-  - 全体方針/共通事項/ER概要/命名規則/インデックス・制約ポリシー等 → 03_db_design.md
-  - ドメイン（テーブル/集約）ごとの詳細（例: users, orders, products） → /db/domains/01_users.md 等に振り分け
-  - どのドメインに属するか不明なDB情報は「仮置き」せず 03_db_design.md に「未分類」として TODO にまとめる
-- バッチ処理は 06_batch_process_design.md に集約しつつ、「ジョブ（処理単位）」ごとに小見出しで分割する
-- 画面設計は /screen 配下へ分割：
+  - テーブル一覧 → /docs/design/database_design.md
+  - 各テーブルについては /docs/design/db_tables 配下へ分割
+- バッチ処理は /docs/design/batches 配下へ分割
+- 画面設計は /docs/design/screen 配下へ分割：
   - 画面IDが分かるものは該当ファイルへ（例: E001_login_screen.md）
-  - 画面IDが不明なものは /screen 配下に「TBD_画面名.md（仮）」を新規提案して良い（ただしファイル新規提案であり、命名は推測と明記）
+  - 画面IDが不明なものは /docs/design/screen 配下に「TBD_画面名.md（仮）」を新規提案して良い（ただしファイル新規提案であり、命名は推測と明記）
   - 1画面=1ファイルを原則とする
 
 # 作業ルール（重要）
@@ -83,7 +82,7 @@
 ## Step 7: 画面設計書の作成（繰り返し）
 * **テンプレ:** `templates/design/screen/screen_design_template.md`
 * **手順:** 識別された「画面」の数だけ繰り返す。情報は単一ファイルに限らず、関連しそうな設計書を横断的に調査して補完すること。
-* **出力:** `/docs/design/screen/` 配下に画面IDごとのファイルを作成（例: `E001_login.md`）。
+* **出力:** `/docs/design/screen/` 配下に画面IDごとのファイルを作成（例: `E001_login_screen.md`）。
 
 ## Step 8: テーブル定義書の作成（繰り返し）
 * **テンプレ:** `templates/design/db_tables/table_definition_template.md`
