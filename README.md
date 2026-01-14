@@ -1,6 +1,6 @@
 ```mermaid
 flowchart LR
-    A[既存設計書] -->|Pythonコマンド<br>convert_to_md.cmd| B[Cline用一時的な情報<br>`temp_design/`]
+    A[既存設計書<br>(.xlsx or .docx)] -->|Pythonコマンド<br>convert_to_md.cmd| B[Cline用一時的な情報<br>`temp_design/`]
     B -->|Clineコマンド<br>/adjust_md_design| C[最終的なmdの設計書<br>docs/design配下に永続化想定]
 
 ```
