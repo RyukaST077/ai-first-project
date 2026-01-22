@@ -57,3 +57,18 @@
 ```text
 {ここに貼る}
 ```
+
+## 制限（あなた=AI が守るべきルール）
+1. **巨大ログ/巨大ファイルは read_file で丸ごと読まないこと**
+- 禁止：read_fileで全量読み／無制限出力
+- 必須：検索→抜粋→必要なら周辺追加（200〜500行程度で上限）
+  - 末尾: Get-Content <file> -Tail 200
+  - 検索: Select-String -Path <file> -Pattern 'ERROR|FATAL|Exception|Traceback|panic' | Select-Object -Last 50
+  - 周辺: Get-Content <file> -TotalCount $end | Select-Object -Skip ($start-1) > log_excerpt.txt
+- 読むのは抜粋ファイル（log_excerpt.txt）のみ
+2. **巨大なターミナル出力は禁止。出力が多いコマンドは必ずログに保存し、表示は末尾200行のみ：**
+```shell
+cd return-workflow-system ; mvn clean compile *> mvn.log ; Get-Content .\mvn.log -Tail 200 ; exit $LASTEXITCODE
+```
+
+
