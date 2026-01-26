@@ -1,0 +1,11 @@
+```mermaid
+flowchart LR
+subgraph human["人間の作業領域"]
+    A["要求仕様"] -- 上流工程の<br>人が作成 --> B["Excel設計書"]
+    B -- Pythonで変換 --> C["md設計書"]
+end
+subgraph ai["AIの作業領域"]
+    C -- 入力 --> D["cline"]
+    D -- 生成 --> E["ソースコード"]
+end
+```
