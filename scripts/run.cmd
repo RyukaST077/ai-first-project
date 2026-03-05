@@ -82,5 +82,5 @@ pip install -r requirements.txt --trusted-host pypi.org --trusted-host pypi.pyth
 exit /b %errorlevel%
 
 :pip_user
-pip install --user openpyxl pandas tabulate python-docx
+pip install --user openpyxl pandas tabulate python-docx xlrd
 exit /b %errorlevel%

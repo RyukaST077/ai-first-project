@@ -10,6 +10,7 @@ import pandas as pd
 from openpyxl import load_workbook
 from docx import Document
 from docx.table import Table
+import xlrd
 
 
 # ----------------------------
@@ -326,11 +327,97 @@ def convert_excel_to_md_per_sheet(xlsx_path: Path, out_dir: Path, blank_rows: in
 
 
 # ----------------------------
+# XLS (Excel 97-2003) processing functions
+# ----------------------------
+def read_xls_matrix_fill_merged(ws) -> List[List[str]]:
+    max_row = ws.nrows
+    max_col = ws.ncols
+
+    mat: List[List[Any]] = []
+    for r in range(max_row):
+        row_vals = []
+        for c in range(max_col):
+            row_vals.append(ws.cell_value(r, c))
+        mat.append(row_vals)
+
+    for crange in ws.merged_cells:
+        rlo, rhi, clo, chi = crange
+        top_left = mat[rlo][clo]
+        for rr in range(rlo, rhi):
+            for cc in range(clo, chi):
+                mat[rr][cc] = top_left
+
+    r0, r1, c0, c1 = sheet_used_bounds(mat)
+    if r1 < r0 or c1 < c0:
+        return []
+
+    trimmed: List[List[str]] = []
+    for r in range(r0, r1 + 1):
+        trimmed.append([normalize_cell(mat[r][c]) for c in range(c0, c1 + 1)])
+    return trimmed
+
+
+def convert_xls_to_md_per_sheet(xls_path: Path, out_dir: Path, blank_rows: int = 1) -> List[Path]:
+    try:
+        wb = xlrd.open_workbook(str(xls_path), formatting_info=True)
+    except Exception:
+        wb = xlrd.open_workbook(str(xls_path))
+        
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    created: List[Path] = []
+    base = xls_path.stem
+
+    for idx, ws in enumerate(wb.sheets(), start=1):
+        sheet_name = ws.name
+        matrix = read_xls_matrix_fill_merged(ws)
+
+        safe_sheet = safe_filename(sheet_name)
+        out_path = out_dir / f"{base}__{idx:02d}_{safe_sheet}.md"
+
+        parts: List[str] = []
+        parts.append(f"# {xls_path.name}")
+        parts.append(f"## {sheet_name}")
+        parts.append("")
+
+        if not matrix:
+            parts.append("_（このシートは空、または値が見つかりませんでした）_")
+            out_path.write_text("\n".join(parts) + "\n", encoding="utf-8")
+            created.append(out_path)
+            continue
+
+        blocks = split_blocks_by_blank_rows(matrix, blank_rows=max(1, blank_rows))
+
+        if len(blocks) == 1:
+            md = block_to_markdown_table(blocks[0])
+            parts.append(md if md.strip() else "_（表が生成できませんでした）_")
+        else:
+            table_no = 0
+            for block in blocks:
+                md = block_to_markdown_table(block)
+                if not md.strip():
+                    continue
+                table_no += 1
+                parts.append(f"### Table {table_no}")
+                parts.append("")
+                parts.append(md)
+                parts.append("")
+
+            if table_no == 0:
+                parts.append("_（表が生成できませんでした）_")
+
+        out_path.write_text("\n".join(parts).rstrip() + "\n", encoding="utf-8")
+        created.append(out_path)
+
+    return created
+
+
+# ----------------------------
 # Directory traversal
 # ----------------------------
 def convert_tree(input_root: Path, output_root: Path, blank_rows: int = 1) -> Tuple[int, int]:
     """
-    Convert all .xlsx and .docx files under input_root into output_root, preserving subdirectory structure.
+    Convert all .xlsx, .xls and .docx files under input_root into output_root, preserving subdirectory structure.
     Returns: (ok_count, ng_count) for documents
     """
     ok = 0
@@ -353,6 +440,24 @@ def convert_tree(input_root: Path, output_root: Path, blank_rows: int = 1) -> Tu
         except Exception as e:
             ng += 1
             print(f"[NG] {xlsx} : {e}", file=sys.stderr)
+
+    # Process Excel files (.xls)
+    xls_files = sorted(input_root.rglob("*.xls"))
+    for xls in xls_files:
+        # Excel作業中の一時ファイルをスキップ
+        if xls.name.startswith("~$"):
+            continue
+
+        rel_dir = xls.parent.relative_to(input_root)
+        out_dir = output_root / rel_dir
+
+        try:
+            convert_xls_to_md_per_sheet(xls, out_dir, blank_rows=blank_rows)
+            ok += 1
+            print(f"[OK] {xls} -> {out_dir}")
+        except Exception as e:
+            ng += 1
+            print(f"[NG] {xls} : {e}", file=sys.stderr)
 
     # Process Word files (.docx)
     docx_files = sorted(input_root.rglob("*.docx"))

@@ -19,16 +19,16 @@
 ### 解決策2: ユーザーレベルインストール
 ```cmd
 # 管理者権限不要でインストール
-pip install --user openpyxl pandas tabulate
+pip install --user openpyxl pandas tabulate xlrd
 ```
 
 ### 解決策3: オフラインインストール
 ```cmd
 # 別の環境でwheelファイルをダウンロード
-pip download openpyxl pandas tabulate -d wheels/
+pip download openpyxl pandas tabulate xlrd -d wheels/
 
 # オフラインでインストール
-pip install --find-links wheels/ --no-index openpyxl pandas tabulate
+pip install --find-links wheels/ --no-index openpyxl pandas tabulate xlrd
 ```
 
 ### 解決策4: 認証情報付きプロキシ設定
