@@ -56,8 +56,8 @@ def sheet_used_bounds(values: List[List[Any]]) -> Tuple[int, int, int, int]:
 
 
 def safe_filename(name: str, max_len: int = 80) -> str:
-    # Windows禁止文字に加え、空白と . も _ に寄せる
-    name = re.sub(r'[\\/:*?"<>|\s.]', "_", name)
+    # Windows禁止文字、空白、ピリオド、日本語句読点、その他特殊文字を _ に変換
+    name = re.sub(r'[\\/:*?"<>|\s.。、，；：！？（）［］｛｝「」『』【】〈〉《》〔〕〖〗〘〙〚〛．]', "_", name)
     name = re.sub(r"_+", "_", name).strip("_")
     if not name:
         name = "sheet"
@@ -181,7 +181,7 @@ def extract_table_from_docx_table(table: Table) -> List[List[str]]:
         cells = []
         for cell in row.cells:
             # セル内のテキストを取得（改行は空白に置換）
-            cell_text = cell.text.strip().replace('\n', ' ').replace('\r', ' ')
+            cell_text = cell.text.strip().replace("\n", " ").replace("\r", " ")
             cells.append(cell_text)
         rows.append(cells)
     return rows
@@ -191,35 +191,36 @@ def convert_docx_to_md(docx_path: Path, out_dir: Path, blank_rows: int = 1) -> L
     """Convert a DOCX file to Markdown format."""
     doc = Document(docx_path)
     out_dir.mkdir(parents=True, exist_ok=True)
-    
-    base = docx_path.stem
+
+    # ベース名にも safe_filename を適用してピリオド等を除去
+    base = safe_filename(docx_path.stem)
     out_path = out_dir / f"{base}.md"
-    
+
     parts: List[str] = []
     parts.append(f"# {docx_path.name}")
     parts.append("")
-    
+
     table_count = 0
-    
+
     for element in doc.element.body:
         # 段落の処理
-        if element.tag.endswith('p'):
+        if element.tag.endswith("p"):
             para = None
             for p in doc.paragraphs:
                 if p._element == element:
                     para = p
                     break
-            
+
             if para:
                 text = para.text.strip()
                 if not text:
                     continue
-                
+
                 # 見出しスタイルの判定
                 style_name = para.style.name if para.style else ""
                 if "Heading" in style_name:
                     # 見出しレベルを抽出（Heading 1 -> #, Heading 2 -> ##, など）
-                    level_match = re.search(r'Heading (\d+)', style_name)
+                    level_match = re.search(r"Heading (\d+)", style_name)
                     if level_match:
                         level = int(level_match.group(1))
                         parts.append(f"{'#' * (level + 1)} {text}")
@@ -229,23 +230,23 @@ def convert_docx_to_md(docx_path: Path, out_dir: Path, blank_rows: int = 1) -> L
                     # 通常の段落
                     parts.append(text)
                 parts.append("")
-        
+
         # 表の処理
-        elif element.tag.endswith('tbl'):
+        elif element.tag.endswith("tbl"):
             table = None
             for t in doc.tables:
                 if t._element == element:
                     table = t
                     break
-            
+
             if table:
                 table_count += 1
                 table_data = extract_table_from_docx_table(table)
-                
+
                 if table_data:
                     # 空の行や列を除去
                     blocks = split_blocks_by_blank_rows(table_data, blank_rows=max(1, blank_rows))
-                    
+
                     if len(blocks) == 1:
                         md = block_to_markdown_table(blocks[0])
                         if md.strip():
@@ -264,10 +265,10 @@ def convert_docx_to_md(docx_path: Path, out_dir: Path, blank_rows: int = 1) -> L
                             parts.append("")
                             parts.append(md)
                             parts.append("")
-    
+
     if not any(part.strip() for part in parts[2:]):  # ヘッダー以外に内容がない場合
         parts.append("_（このドキュメントは空、または内容が見つかりませんでした）_")
-    
+
     out_path.write_text("\n".join(parts).rstrip() + "\n", encoding="utf-8")
     return [out_path]
 
@@ -280,7 +281,8 @@ def convert_excel_to_md_per_sheet(xlsx_path: Path, out_dir: Path, blank_rows: in
     out_dir.mkdir(parents=True, exist_ok=True)
 
     created: List[Path] = []
-    base = xlsx_path.stem
+    # ベース名にも safe_filename を適用してピリオド等を除去
+    base = safe_filename(xlsx_path.stem)
 
     for idx, sheet_name in enumerate(wb.sheetnames, start=1):
         ws = wb[sheet_name]
@@ -362,11 +364,12 @@ def convert_xls_to_md_per_sheet(xls_path: Path, out_dir: Path, blank_rows: int =
         wb = xlrd.open_workbook(str(xls_path), formatting_info=True)
     except Exception:
         wb = xlrd.open_workbook(str(xls_path))
-        
+
     out_dir.mkdir(parents=True, exist_ok=True)
 
     created: List[Path] = []
-    base = xls_path.stem
+    # ベース名にも safe_filename を適用してピリオド等を除去
+    base = safe_filename(xls_path.stem)
 
     for idx, ws in enumerate(wb.sheets(), start=1):
         sheet_name = ws.name
@@ -491,7 +494,10 @@ def main() -> int:
     output_root = Path(args.out_dir).resolve()
 
     if not input_root.exists():
-        print(f'Input directory not found: {input_root}  （repo直下に「設計書」フォルダを作ってxlsxやdocxファイルを置いてください）', file=sys.stderr)
+        print(
+            f'Input directory not found: {input_root}  （repo直下に「設計書」フォルダを作ってxlsxやdocxファイルを置いてください）',
+            file=sys.stderr,
+        )
         return 2
 
     ok, ng = convert_tree(input_root, output_root, blank_rows=max(1, args.blank_rows))
