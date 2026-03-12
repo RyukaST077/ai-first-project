@@ -56,9 +56,9 @@ def sheet_used_bounds(values: List[List[Any]]) -> Tuple[int, int, int, int]:
 
 
 def safe_filename(name: str, max_len: int = 80) -> str:
-    # Windows禁止文字を置換
-    name = re.sub(r'[\\/:*?"<>|]', "_", name)
-    name = re.sub(r"\s+", " ", name).strip()
+    # Windows禁止文字に加え、空白と . も _ に寄せる
+    name = re.sub(r'[\\/:*?"<>|\s.]', "_", name)
+    name = re.sub(r"_+", "_", name).strip("_")
     if not name:
         name = "sheet"
     return name[:max_len]
