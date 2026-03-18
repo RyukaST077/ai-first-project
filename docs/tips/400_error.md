@@ -26,7 +26,7 @@
    **ターミナルでコマンドを実行する際は下記のテンプレに従って、ファイルにログを保存し、末尾200行のみを出力すること**
     ```powershell
     Set-Location <project-path>
-    $log = "<logfile>.log"
+    $log = "cline_terminal_log/<logfile>.log"
 
     <command> *>&1 |
     Out-File -FilePath $log -Encoding utf8
