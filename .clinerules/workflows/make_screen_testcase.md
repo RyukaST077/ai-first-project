@@ -1,6 +1,6 @@
 ## ユーザー入力
 このコマンドは下記の形式で入力されます。
-- `/make_test_plan.md [テスト対象画面]` 
+- `/make_screen_testcase.md [テスト対象画面名]` 
 
 ## 依頼
 ユーザーから入力された対象画面について、参考資料を基に画面テストの計画書を作成してください。出力ファイルは `templates\single_test_plan_template.md` に従うこと。
@@ -9,6 +9,9 @@
 リポジトリドキュメント： `docs/**/*.md`
 設計書フォルダ： `docs/design/**/*.md`
 清書前設計書フォルダ（設計書フォルダに情報がない場合に参照）： `scripts/converted_md_design/**/*.md`
+
+## 出力形式
+- テンプレート( `templates\single_test_plan_template.md` )に従ったファイルを `docs/test/screen/screen_test_<画面名>.md` に作成する
 
 ## テンプレート利用ルール
 
