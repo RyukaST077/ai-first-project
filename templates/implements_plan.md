@@ -61,6 +61,10 @@ last_updated: "YYYY-MM-DD"
 * 例: `templates/design/05_non_functional_requirements.md`（非機能要件）
 * 例: `templates/design/09_roles_permissions.md`（権限 / ロール）
 
+## 1.6 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 2. 開発の進め方（チーム戦略）
@@ -152,6 +156,10 @@ last_updated: "YYYY-MM-DD"
    * **BE**: DB → Repository → UseCase → Handler の順で実装。
    * **FE**: UIコンポーネント → ページ実装 → ダミーデータでの挙動確認 → API繋ぎ込み。
 
+## 2.9 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 3. 依存関係の整理（最重要）
@@ -203,6 +211,10 @@ flowchart LR
   S02 --> S08[注文履歴]
 ```
 
+## 3.4 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 4. モック方針（遷移先がスコープ外/未実装の場合）
@@ -220,6 +232,10 @@ flowchart LR
 * 画面未完成 → モック画面（ダミーUI + 戻る/次へだけ）
 * モック除去の責務:
 * 後続タスクに「モック除去」チェックを含める
+
+## 4.3 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
 
 ---
 
@@ -326,6 +342,10 @@ flowchart LR
 | P2 | T-038 | Code | - | 技術的負債の棚卸し | なし | | |
 | P1 | T-039 | Ops | - | 運用課題の整理（アラート過多、ログ不足等） | なし | | |
 
+## 5.1 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 6. 役割分担（ざっくり）
@@ -337,6 +357,10 @@ flowchart LR
 | QA     |     |     | テスト観点/回帰 |
 | DevOps |     |     | CI/CD/監視 |
 
+## 6.1 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 7. リスクと対策
@@ -346,6 +370,10 @@ flowchart LR
 | 依存の詰まり | 上流API未完成 | 待ち時間増 | 先にIF固定＋モック     | PR滞留日数  |
 | 仕様ブレ   | 合意不足     | 手戻り   | Phase0で固定、変更履歴 | 変更要求件数  |
 
+## 7.1 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
+
 ---
 
 # 8. 変更履歴
@@ -353,5 +381,9 @@ flowchart LR
 | 日付         | 変更者 | 変更内容 | 理由 |
 | ---------- | --- | ---- | -- |
 | YYYY-MM-DD |     | 初版   | -  |
+
+## 8.1 本章で参照した設計ドキュメント
+
+* `docs/<document-name>.md`（要確認）
 
 ---
