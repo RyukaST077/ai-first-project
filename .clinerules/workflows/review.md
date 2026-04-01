@@ -20,59 +20,59 @@
 
 ## EXECUTION PLAN（必ずこの順序で実行）:
 
-Step 0: リポジトリ状態確認（読み取りのみ）
-1) git rev-parse --show-toplevel
-2) git status --porcelain=v1
-3) git branch --show-current
-4) git log -1 --oneline
+### Step 0: リポジトリ状態確認（読み取りのみ）
+1. git rev-parse --show-toplevel
+2. git status --porcelain=v1
+3. git branch --show-current
+4. git log -1 --oneline
 
-Step 1: レビュー観点リストの読み込みとチェックリスト化
-1) ls -la templates
-2) test -f templates/review_list.md && echo "FOUND" || echo "MISSING"
-3) sed -n '1,200p' templates/review_list.md
-4) sed -n '200,400p' templates/review_list.md （必要なら続ける）
-5) review_list.md の見出し・箇条書きからチェック項目を抽出し、内部チェックリストを作る:
+### Step 1: レビュー観点リストの読み込みとチェックリスト化
+1. ls -la templates
+2. test -f templates/review_list.md && echo "FOUND" || echo "MISSING"
+3. sed -n '1,200p' templates/review_list.md
+4. sed -n '200,400p' templates/review_list.md （必要なら続ける）
+5. review_list.md の見出し・箇条書きからチェック項目を抽出し、内部チェックリストを作る:
    - 各項目に一意IDを付与（例: RL-001…）
    - 見出し名を category として保持
    - 優先度表記（P0/P1, MUST/SHOULD等）があればそれに従う
    - 優先度が無い場合は “security > correctness > performance > maintainability” を推定し、推定であることを明記
 
-Step 2: mainとの差分生成（BASEは main 固定）
+### Step 2: mainとの差分生成（BASEは main 固定）
 - BASE_REF は次の優先順で決める:
-  1) refs/remotes/origin/main があるなら BASE_REF=origin/main
-  2) なければ refs/heads/main があるなら BASE_REF=main
-  3) どちらも無ければ Questions に「main参照が見つからない」を出す
+  1. refs/remotes/origin/main があるなら BASE_REF=origin/main
+  2. なければ refs/heads/main があるなら BASE_REF=main
+  3. どちらも無ければ Questions に「main参照が見つからない」を出す
 
 コマンド:
-1) git show-ref --verify --quiet refs/remotes/origin/main && echo "HAS origin/main" || echo "NO origin/main"
-2) git show-ref --verify --quiet refs/heads/main && echo "HAS main" || echo "NO main"
+1. git show-ref --verify --quiet refs/remotes/origin/main && echo "HAS origin/main" || echo "NO origin/main"
+2. git show-ref --verify --quiet refs/heads/main && echo "HAS main" || echo "NO main"
 
 （任意：許可されている場合のみ）
-3) git fetch origin main:refs/remotes/origin/main
+3. git fetch origin main:refs/remotes/origin/main
 
 差分作成:
-4) git diff --name-status ${BASE_REF}...HEAD
-5) git diff --stat ${BASE_REF}...HEAD
-6) git diff ${BASE_REF}...HEAD > /tmp/pr.diff
-7) git diff -U0 ${BASE_REF}...HEAD > /tmp/pr_u0.diff  （行番号・hunk特定用）
+4. git diff --name-status ${BASE_REF}...HEAD
+5. git diff --stat ${BASE_REF}...HEAD
+6. git diff ${BASE_REF}...HEAD > /tmp/pr.diff
+7. git diff -U0 ${BASE_REF}...HEAD > /tmp/pr_u0.diff  （行番号・hunk特定用）
 
-Step 3: 変更ファイルの中身を把握（重点順に）
+### Step 3: 変更ファイルの中身を把握（重点順に）
 - 変更ファイル一覧から優先して読む:
   認可/認証, 入力検証, 永続化(DB), 暗号/署名, 機密/ログ, 外部I/O, 課金/決済, 設定
 - 大きいファイルは該当箇所中心に表示（必要部分だけ）
   例: sed -n '1,200p' path/to/file
   例: rg -n "keyword" path/to/file（ripgrepがあれば）
 
-Step 4: 既存の lint/test/typecheck の実行（“定義されているものだけ”）
+### Step 4: 既存の lint/test/typecheck の実行（“定義されているものだけ”）
 - 依存追加やインストールはしない。まず定義を確認してから実行。
-1) ls
-2) （Nodeなら）test -f package.json && cat package.json
+1. ls
+2. （Nodeなら）test -f package.json && cat package.json
    - scripts に lint/test/typecheck があれば、そのコマンドだけ実行（例: npm run -s test）
-3) （Pythonなら）test -f pyproject.toml && cat pyproject.toml
+3. （Pythonなら）test -f pyproject.toml && cat pyproject.toml
    - 設定にあるツールだけ実行（pytest/ruff/mypy等）
-4) 失敗した場合はログの要点を要約し、レビュー結果に反映（全文貼り付けは避ける）
+4. 失敗した場合はログの要点を要約し、レビュー結果に反映（全文貼り付けは避ける）
 
-Step 5: レビュー判定（review_list.md に沿って）
+### Step 5: レビュー判定（review_list.md に沿って）
 - 内部チェックリスト（RL-xxx）を上から順に適用し、各観点について:
   - 問題があれば issue 化（差分由来のみ）
   - 判断不能は Questions へ（断定しない）
@@ -85,8 +85,10 @@ Step 5: レビュー判定（review_list.md に沿って）
   - Validation（追加/修正すべきテスト or 手動確認）
   - Confidence（0.0〜1.0）
 
-## OUTPUT（必ずこの構造で）:
-```MD
+## OUTPUT:
+- 下記の形式のマークダウンファイルとして `docs/reviews/review-title.md` として出力
+
+```md
 ## Constraints
 （例: fetch不可でorigin/mainが古い可能性、テスト未実行など）
 ## Base

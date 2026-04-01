@@ -8,7 +8,7 @@
 ## 参考資料
 リポジトリドキュメント： `docs/**/*.md`
 設計書フォルダ： `docs/design/**/*.md`
-清書前設計書フォルダ（設計書フォルダに情報がない場合に参照）： `scripts/converted_md_design/**/*.md`
+清書前設計書フォルダ（設計書フォルダに情報がない場合に参照）： `convert2md_scripts/converted_md_design/**/*.md`
 
 ## 出力形式
 - テンプレート( `templates\single_test_plan_template.md` )に従ったファイルを `docs/test/screen/screen_test_<画面名>.md` に作成する
@@ -19,4 +19,3 @@
 - 不要な章・節・テストカテゴリは削除する
 - 必要に応じてテストカテゴリ、テストケース、観点を追加する
 - テスト項目番号はプロジェクトの採番ルールに従って調整する
-
