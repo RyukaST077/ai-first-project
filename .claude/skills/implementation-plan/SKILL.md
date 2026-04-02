@@ -1,6 +1,7 @@
 ---
 name: implementation-plan
 description: Create or update `docs/implements_plan.md` from `templates/implements_plan.md` and the project design documents in `docs/`. Use this when the user asks for a project-wide implementation plan, team development strategy, dependency ordering, mock policy, phased implementation plan, rough role split, risk analysis, or change history grounded in existing documentation.
+disable-model-invocation: true
 ---
 
 # Implementation Plan

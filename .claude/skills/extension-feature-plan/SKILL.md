@@ -1,6 +1,7 @@
 ---
 name: extension-feature-plan
 description: 既存コードに追加機能を導入するため、`templates/extension_feature_plan.md` と `docs/` をもとに `docs/implements_plan.md` を作成・更新する。既存実装調査、影響範囲、依存関係、モック方針、フェーズ別計画、リスク、変更履歴の整理に使う。
+disable-model-invocation: true
 ---
 
 # Extension Feature Plan
