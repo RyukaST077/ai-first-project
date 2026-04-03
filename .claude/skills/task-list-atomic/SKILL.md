@@ -1,23 +1,17 @@
 ---
 name: task-list-atomic
-description: Create or update `_tasks/<TASK_ID>.md` by decomposing a task in `docs/implements_plan.md` into an atomic-commit work task list. Use this when the user asks to break down an implementation-plan task into commit-sized steps for parallel development.
+description: Create or update `_tasks/$ARGUMENTS.md` by decomposing a task in `docs/implements_plan.md` into an atomic-commit work task list. Use this when the user asks to break down an implementation-plan task into commit-sized steps for parallel development.
 disable-model-invocation: true
 ---
 
 # Task List Atomic
 
-Use this skill to turn a task from `docs/implements_plan.md` into an implementation-ready task file at `_tasks/<TASK_ID>.md`.
-
-## Required Input
-
-- `TASK_ID` from `docs/implements_plan.md` such as `TASK-123`
-
-If `TASK_ID` is not provided, ask for it and stop. Do not create or update any task file.
+Use this skill to turn a task from `docs/implements_plan.md` into an implementation-ready task file at `_tasks/$ARGUMENTS.md`.
 
 ## Bundled Reference
 
 - Read `references/task_template.md` first and follow it exactly.
-- Output is limited to `_tasks/<TASK_ID>.md`.
+- Output is limited to `_tasks/$ARGUMENTS.md`.
 
 ## Core Rules
 
@@ -26,10 +20,10 @@ If `TASK_ID` is not provided, ask for it and stop. Do not create or update any t
 - Keep `1 commit = 1 purpose`. Do not mix feature work, refactoring, test cleanup, documentation cleanup, or infra changes in the same commit unless the extra work is the minimum required to make that commit valid.
 - Make every acceptance criterion terminal-verifiable using a command plus expected exit code or output. Do not use visual checks, browser checks, or subjective criteria.
 - Every commit must be a buildable and testable unit.
-- Use Conventional Commits: `<type>(<scope>): [<TASK_ID>] <description>`.
+- Use Conventional Commits: `<type>(<scope>): [$ARGUMENTS] <description>`.
 - For each commit section, include the referenced design documents that justify that commit.
 - Enforce the task fence strictly. Do not implement other tasks, adjacent screens, unrelated APIs, speculative work, or scope-external refactors.
-- Do not write any file other than `_tasks/<TASK_ID>.md` unless the user explicitly asks to resolve `TBD` values in design documents.
+- Do not write any file other than `_tasks/$ARGUMENTS.md` unless the user explicitly asks to resolve `TBD` values in design documents.
 
 ## Response Format
 
@@ -46,8 +40,8 @@ Every substantive response in this workflow should include:
 
 ## Workflow
 
-1. Search `docs/implements_plan.md` for `TASK_ID`.
-2. If the task does not exist, stop and report that `TASK_ID` was not found. Do not create `_tasks/<TASK_ID>.md`.
+1. Search `docs/implements_plan.md` for `$ARGUMENTS`.
+2. If the task does not exist, stop and report that `$ARGUMENTS` was not found. Do not create `_tasks/$ARGUMENTS.md`.
 3. Extract the task summary, priority, targets, dependencies, downstream tasks, and planning hints from `docs/implements_plan.md`.
 4. Identify relevant design evidence in `docs/design/basic_design.md` and related files under `docs/design/`.
 5. Define scope boundaries by listing `IN SCOPE`, `OUT OF SCOPE`, and `BOUNDARY` resources, including adjacent tasks and ownership where possible.
@@ -59,19 +53,19 @@ Every substantive response in this workflow should include:
 11. Design the commit sequence in the order `foundation -> core -> integration -> finish`, with a maximum of 20 commits. Merge commits if the list would exceed 20.
 12. For each commit, list the design documents or sections referenced by that commit.
 13. Mark which commits are strictly sequential and which can be handled in parallel.
-14. Write `_tasks/<TASK_ID>.md` using `references/task_template.md` exactly, with no omitted sections.
+14. Write `_tasks/$ARGUMENTS.md` using `references/task_template.md` exactly, with no omitted sections.
 
 ## Gate Checks
 
 ### Gate 0
 
-- `TASK_ID` exists in `docs/implements_plan.md`
+- `$ARGUMENTS` exists in `docs/implements_plan.md`
 - dependency information is present or explicitly marked as none
 - the split strategy can be justified from documented evidence
 
 Suggested verification:
 
-- `grep -n "<TASK_ID>" docs/implements_plan.md`
+- `grep -n "$ARGUMENTS" docs/implements_plan.md`
 
 ### Gate 0.5
 
@@ -100,7 +94,7 @@ Suggested verification:
 
 Suggested verification:
 
-- inspect the `TBD` section in `_tasks/<TASK_ID>.md`
+- inspect the `TBD` section in `_tasks/$ARGUMENTS.md`
 - `git diff docs/`
 
 Do not proceed to commit design while any unresolved `TBD` remains.
@@ -116,7 +110,7 @@ Do not proceed to commit design while any unresolved `TBD` remains.
 
 Suggested verification:
 
-- `grep -c "^## C-" _tasks/<TASK_ID>.md`
+- `grep -c "^## C-" _tasks/$ARGUMENTS.md`
 
 ### Gate 3
 
@@ -136,5 +130,5 @@ Suggested verification:
 
 ## Output
 
-- Primary output: `_tasks/<TASK_ID>.md`
+- Primary output: `_tasks/$ARGUMENTS.md`
 - Expected outcome: an atomic-commit task file with explicit scope boundaries, evidence-backed decomposition, and terminal-verifiable acceptance criteria

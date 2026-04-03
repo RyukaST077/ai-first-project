@@ -1,6 +1,7 @@
 ---
 name: implement
 description: タスクリストに並んだコミットタスクを番号順に1件ずつ実装する。`tasks.md` や `task_list.md` を起点に、参照設計書を確認しながら、進捗確認、既存実装の調査、最小変更での実装、検証、自己チェック、タスクリスト更新までを一連で進めるときに使う。
+argument-hint: タスクリストのパス指定してください。例: `tasks.md` や `task_list.md`
 disable-model-invocation: true
 ---
 
