@@ -1,5 +1,5 @@
 ---
-name: task-list-atomic
+name: tasks
 description: Create or update `_tasks/$ARGUMENTS.md` by decomposing a task in `docs/implements_plan.md` into an atomic-commit work task list. Use this when the user asks to break down an implementation-plan task into commit-sized steps for parallel development.
 disable-model-invocation: true
 ---
