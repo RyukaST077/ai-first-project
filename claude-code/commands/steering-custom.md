@@ -39,7 +39,7 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
    - 100〜200行（2〜3分で読める量）を目安
 
 5. **ファイル作成**:
-   - `{{KIRO_DIR}}/.memory-bank/steering/{name}.md` に作成
+   - `.memory-bank/steering/{name}.md` に作成
 
 ## 利用可能テンプレート
 
@@ -84,7 +84,7 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 ✅ カスタム Steering を作成しました
 
 ## 作成ファイル:
-- {{KIRO_DIR}}/.memory-bank/steering/api-standards.md
+- .memory-bank/steering/api-standards.md
 
 ## 参照元:
 - テンプレート: api-standards.md
@@ -125,4 +125,4 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 - すべての steering ファイルはプロジェクト記憶として読み込まれる
 - カスタムファイルはコアと同等に重要
 - エージェント固有ツールディレクトリ（例: `.cursor/`, `.gemini/`, `.claude/`）は文書化しない
-- `{{KIRO_DIR}}/specs/` と `{{KIRO_DIR}}/.memory-bank/steering/` の軽い参照は可。他の `.kiro/` ディレクトリへの言及は避ける
+- `{{KIRO_DIR}}/specs/` と `.memory-bank/steering/` の軽い参照は可。他の `.kiro/` ディレクトリへの言及は避ける

@@ -25,7 +25,7 @@ argument-hint: <feature-name> [task-numbers]
 
 **必要なコンテキストをすべて読み込む**:
 - `{{KIRO_DIR}}/specs/$1/spec.json`, `requirements.md`, `design.md`, `tasks.md`
-- **`{{KIRO_DIR}}/.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
+- **`.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
 
 **承認を検証**:
 - spec.json でタスクが承認済みかを確認（未承認なら停止。Safety & Fallback 参照）

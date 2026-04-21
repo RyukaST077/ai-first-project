@@ -1,6 +1,6 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(python:*)",
       "Bash(python3:*)",
@@ -20,7 +20,9 @@
       "Bash(tee run.log)",
       "Write",
       "Bash(Out-File -FilePath run_test.log -Encoding utf8)",
-      "Bash(Get-Content run_test.log -Tail 30)"
+      "Bash(Get-Content run_test.log -Tail 30)",
+      "Bash(rm .claude/skills/spec-design/reference/gap-analysis-framework.md .claude/skills/spec-design/reference/design-principles.md .claude/skills/spec-design/reference/design-review-checklist.md .claude/skills/spec-design/reference/discovery-guide.md)",
+      "Bash(cp templates/cc_sdd_templates/shared/settings/rules/gap-analysis.md templates/cc_sdd_templates/shared/settings/rules/design-discovery-full.md templates/cc_sdd_templates/shared/settings/rules/design-discovery-light.md templates/cc_sdd_templates/shared/settings/rules/design-synthesis.md templates/cc_sdd_templates/shared/settings/rules/design-principles.md templates/cc_sdd_templates/shared/settings/rules/design-review.md templates/cc_sdd_templates/shared/settings/rules/design-review-gate.md .claude/skills/spec-design/reference/)"
     ],
     "deny": [
       "Read(/memory-bank-template)",
@@ -93,10 +95,9 @@
       "Read(/node_modules)",
       "Read(**/checkstyle-cachefile)",
       "Read(**/checkstyle-result.xml)"
-    ]
+    ],
+    "defaultMode": "bypassPermissions"
   },
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "skipDangerousModePermissionPrompt": true,
   "hooks": {
     "PostToolUse": [
       {
@@ -104,8 +105,8 @@
         "hooks": [
           {
             "type": "command",
-            "shell": "powershell",
-            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\docs_memory_reminder.ps1')"
+            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\docs_memory_reminder.ps1')",
+            "shell": "powershell"
           }
         ]
       }
@@ -115,8 +116,8 @@
         "hooks": [
           {
             "type": "command",
-            "shell": "powershell",
-            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\ensure_docs_memory_updated.ps1')"
+            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\ensure_docs_memory_updated.ps1')",
+            "shell": "powershell"
           }
         ]
       }
@@ -127,11 +128,12 @@
         "hooks": [
           {
             "type": "command",
-            "shell": "powershell",
-            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\inject_memory_bank.ps1')"
+            "command": "& (Join-Path $env:CLAUDE_PROJECT_DIR '.claude\\hooks\\inject_memory_bank.ps1')",
+            "shell": "powershell"
           }
         ]
       }
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }

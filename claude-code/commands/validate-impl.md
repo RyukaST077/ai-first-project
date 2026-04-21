@@ -45,7 +45,7 @@ argument-hint: [feature-name] [task-numbers]
 - `{{KIRO_DIR}}/specs/<feature>/requirements.md`（要件）
 - `{{KIRO_DIR}}/specs/<feature>/design.md`（設計構造）
 - `{{KIRO_DIR}}/specs/<feature>/tasks.md`（タスク一覧）
-- **steering 文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（既定 + カスタム）
+- **steering 文脈をすべて読み込む**: `.memory-bank/steering/` 全体（既定 + カスタム）
 
 ### 3. 検証実行
 

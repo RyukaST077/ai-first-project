@@ -26,7 +26,7 @@ argument-hint: <feature-name> [-y] [--sequential]
 **必要なコンテキストをすべて読み込む**:
 - `{{KIRO_DIR}}/specs/$1/spec.json`, `requirements.md`, `design.md`
 - `{{KIRO_DIR}}/specs/$1/tasks.md`（存在する場合、マージモードの参照）
-- **`{{KIRO_DIR}}/.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
+- **`.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
 
 **承認を検証**:
 - `-y` フラグ指定時（$2 == "-y"）: spec.json の requirements/design を自動承認

@@ -25,7 +25,7 @@ argument-hint: <feature-name> [-y]
 
 **必要なコンテキストをすべて読み込む**:
 - `{{KIRO_DIR}}/specs/$1/spec.json`, `requirements.md`, `design.md`（存在する場合）
-- **`{{KIRO_DIR}}/.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
+- **`.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
 - `{{KIRO_DIR}}/settings/templates/specs/design.md`（文書構造）
 - `{{KIRO_DIR}}/settings/rules/design-principles.md`（設計原則）
 - `{{KIRO_DIR}}/settings/templates/specs/research.md`（調査ログ構造）

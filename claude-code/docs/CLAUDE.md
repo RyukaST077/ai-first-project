@@ -5,12 +5,12 @@ AI-DLC（AI Development Life Cycle）上での Kiro 形式 Spec Driven Developme
 ## プロジェクト文脈
 
 ### パス
-- Steering: `{{KIRO_DIR}}/.memory-bank/steering/`
+- Steering: `.memory-bank/steering/`
 - Specs: `{{KIRO_DIR}}/specs/`
 
 ### Steering と仕様
 
-**Steering** (`{{KIRO_DIR}}/.memory-bank/steering/`) - プロジェクト横断のルールと文脈で AI をガイド
+**Steering** (`.memory-bank/steering/`) - プロジェクト横断のルールと文脈で AI をガイド
 **Specs** (`{{KIRO_DIR}}/specs/`) - 個別機能の開発プロセスを形式化
 
 ### アクティブ仕様
@@ -40,6 +40,6 @@ AI-DLC（AI Development Life Cycle）上での Kiro 形式 Spec Driven Developme
 - ユーザー指示に正確に従い、その範囲で自律的に行動する: 必要な文脈を収集し、この実行内で依頼作業を端から端まで完了する。必須情報が欠ける、または指示が重大に曖昧な場合にのみ質問する。
 
 ## Steering 設定
-- `{{KIRO_DIR}}/.memory-bank/steering/` 全体をプロジェクト記憶として読み込む
+- `.memory-bank/steering/` 全体をプロジェクト記憶として読み込む
 - 既定ファイル: `product.md`, `tech.md`, `structure.md`
 - カスタムファイルをサポート（`/kiro:steering-custom` で管理）

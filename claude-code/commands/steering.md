@@ -1,12 +1,12 @@
 ---
-description: {{KIRO_DIR}}/.memory-bank/steering/ を永続的なプロジェクト知識として管理する
+description: .memory-bank/steering/ を永続的なプロジェクト知識として管理する
 allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 ---
 
 # Kiro Steering 管理
 
 <background_information>
-**役割**: `{{KIRO_DIR}}/.memory-bank/steering/` を永続的なプロジェクト記憶として維持する。
+**役割**: `.memory-bank/steering/` を永続的なプロジェクト記憶として維持する。
 
 **ミッション**:
 - Bootstrap: コードベースからコア steering を生成（初回）
@@ -16,13 +16,13 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 **成功条件**:
 - steering が網羅リストではなくパターンと原則を捉えている
 - コードとのドリフトを検出して報告できる
-- `{{KIRO_DIR}}/.memory-bank/steering/*.md` をコア/カスタム問わず同等に扱う
+- `.memory-bank/steering/*.md` をコア/カスタム問わず同等に扱う
 </background_information>
 
 <instructions>
 ## シナリオ判定
 
-`{{KIRO_DIR}}/.memory-bank/steering/` の状態を確認:
+`.memory-bank/steering/` の状態を確認:
 
 **Bootstrap モード**: 空、またはコアファイル（product.md, tech.md, structure.md）が不足  
 **Sync モード**: すべてのコアファイルが存在
@@ -50,7 +50,7 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 ## Sync フロー
 
-1. 既存 steering（`{{KIRO_DIR}}/.memory-bank/steering/*.md`）をすべて読み込む
+1. 既存 steering（`.memory-bank/steering/*.md`）をすべて読み込む
 2. コードベースの変更を分析（JIT）
 3. ドリフトを検出:
    - **Steering → コード**: 欠落要素 → 警告
@@ -134,10 +134,10 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 ## 注記
 
-- `{{KIRO_DIR}}/.memory-bank/steering/*.md` はすべてプロジェクト記憶として読み込まれる
+- `.memory-bank/steering/*.md` はすべてプロジェクト記憶として読み込まれる
 - テンプレートと原則は外部カスタマイズ可能
 - 焦点はカタログ化ではなくパターン化
 - 「黄金律」: 既存パターンに沿う新規コードなら steering 更新は不要
 - エージェント固有ツールディレクトリ（例: `.cursor/`, `.gemini/`, `.claude/`）は文書化しない
 - `{{KIRO_DIR}}/settings/` は steering に記録しない（設定はメタデータであり、プロジェクト知識ではない）
-- `{{KIRO_DIR}}/specs/` と `{{KIRO_DIR}}/.memory-bank/steering/` の軽い参照は可。他の `.kiro/` ディレクトリへの言及は避ける
+- `{{KIRO_DIR}}/specs/` と `.memory-bank/steering/` の軽い参照は可。他の `.kiro/` ディレクトリへの言及は避ける

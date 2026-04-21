@@ -24,7 +24,7 @@ argument-hint: <feature-name>
 1. **コンテキスト読込**:
    - `{{KIRO_DIR}}/specs/$1/spec.json` を読み、言語とメタデータを確認
    - `{{KIRO_DIR}}/specs/$1/requirements.md` を読み、プロジェクト説明を確認
-   - **ステアリング文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（以下を含む）
+   - **ステアリング文脈をすべて読み込む**: `.memory-bank/steering/` 全体（以下を含む）
      - 既定ファイル: `structure.md`, `tech.md`, `product.md`
      - モード設定に関係なく、すべてのカスタム steering ファイル
      - これにより、完全なプロジェクト記憶と文脈を得る
