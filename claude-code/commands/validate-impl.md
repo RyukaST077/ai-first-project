@@ -1,0 +1,136 @@
+---
+description: 要件・設計・タスクに対する実装整合性を検証する
+allowed-tools: Bash, Glob, Grep, Read, LS
+argument-hint: [feature-name] [task-numbers]
+---
+
+# 実装バリデーション
+
+<background_information>
+- **ミッション**: 実装が承認済み requirements/design/tasks と整合しているか検証する
+- **成功条件**:
+  - 対象タスクが完了済みとして記録されている
+  - 実装機能のテストが存在し、通過している
+  - 要件トレーサビリティ（EARS 要件のカバー）を確認できる
+  - 設計構造が実装に反映されている
+  - 既存機能に回帰がない
+</background_information>
+
+<instructions>
+## 主タスク
+承認済み仕様を基に、機能およびタスクの実装を検証する。
+
+## 実行手順
+
+### 1. 検証対象の特定
+
+**引数なし**（`$1` 空）:
+- 会話履歴から `/kiro:spec-impl <feature> [tasks]` コマンドを解析
+- 各実行の feature 名とタスク番号を抽出
+- feature ごとに実装済みタスクを集約
+- 検出結果を報告（例: "user-auth: 1.1, 1.2, 1.3"）
+- 履歴がなければ `{{KIRO_DIR}}/specs/` を走査し、`[x]` タスクがある feature を検出
+
+**feature のみ指定**（`$1` あり、`$2` 空）:
+- 指定 feature を対象化
+- `{{KIRO_DIR}}/specs/$1/tasks.md` の完了タスク `[x]` を全検出
+
+**feature + tasks 指定**（`$1` と `$2` あり）:
+- 指定 feature と指定タスクのみ検証（例: `user-auth 1.1,1.2`）
+
+### 2. コンテキスト読込
+
+検出した各 feature について:
+- `{{KIRO_DIR}}/specs/<feature>/spec.json`（メタデータ）
+- `{{KIRO_DIR}}/specs/<feature>/requirements.md`（要件）
+- `{{KIRO_DIR}}/specs/<feature>/design.md`（設計構造）
+- `{{KIRO_DIR}}/specs/<feature>/tasks.md`（タスク一覧）
+- **steering 文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（既定 + カスタム）
+
+### 3. 検証実行
+
+各タスクについて次を検証:
+
+#### タスク完了チェック
+- tasks.md のチェックボックスが `[x]`
+- 未完了なら "Task not marked complete" として報告
+
+#### テストカバレッジチェック
+- タスク関連機能のテストが存在
+- テストが通過（失敗/エラーなし）
+- Bash でテストコマンド実行（例: `npm test`, `pytest`）
+- 失敗またはテスト不足なら "Test coverage issue"
+
+#### 要件トレーサビリティ
+- タスク関連の EARS 要件を特定
+- Grep で実装に要件カバーの証跡があるか確認
+- 追跡不能なら "Requirement not implemented"
+
+#### 設計整合性
+- design.md の構造が実装に反映されているか確認
+- 主要インターフェース、コンポーネント、モジュールの存在を検証
+- Grep/LS でファイル構造を確認
+- 乖離があれば "Design deviation"
+
+#### 回帰チェック
+- 可能ならフルテストスイートを実行
+- 既存テスト破壊がないか確認
+- 回帰があれば "Regression detected"
+
+### 4. レポート生成
+
+spec.json 指定言語で要約を提供:
+- feature 別の検証サマリー
+- カバレッジレポート（tasks, requirements, design）
+- 重要度付きの課題・乖離（Critical/Warning）
+- GO/NO-GO 判定
+
+## 重要な制約
+- **会話履歴優先**: 自動検出では会話履歴を最優先
+- **非ブロッキング警告**: 設計乖離は重大でない限り警告扱い
+- **テスト重視**: GO 判定にはテストカバレッジを必須
+- **トレーサビリティ必須**: すべての要件を実装へ追跡可能にする
+</instructions>
+
+## ツールガイダンス
+- **会話解析**: 履歴から `/kiro:spec-impl` パターンを抽出
+- **文脈読込**: 検証前に spec と steering を読み込む
+- **Bash でテスト**: テストコマンド実行で通過を確認
+- **Grep で追跡**: 要件証跡をコードベース検索
+- **LS/Glob で構造確認**: 設計構造との整合を確認
+
+## 出力仕様
+
+spec.json 指定言語で以下を出力:
+
+1. **検証対象**: 自動検出時は対象 feature と tasks を明示
+2. **検証サマリー**: feature ごとの pass/fail 件数
+3. **課題一覧**: 重要度と場所付きの失敗項目
+4. **カバレッジ**: requirements/design/tasks の達成率
+5. **判定**: GO（次フェーズへ進行可）/ NO-GO（修正必要）
+
+**形式要件**:
+- 可読性のため Markdown 見出しと表を使用
+- 重大課題は ⚠️ または 🔴 で明示
+- 要約は簡潔に（400語未満）
+
+## 安全性とフォールバック
+
+### エラーシナリオ
+- **実装未検出**: 履歴に `/kiro:spec-impl` がなく `[x]` タスクもない場合は "No implementations detected"
+- **テストコマンド不明**: フレームワーク不明なら警告し、テスト検証をスキップ（手動確認を要求）
+- **spec ファイル不足**: spec.json/requirements.md/design.md が欠けていれば停止
+- **言語未定義**: spec.json に言語がなければ英語（`en`）を既定にする
+
+### 次のステップ案内
+
+**GO 判定の場合**:
+- 実装は検証済みで次へ進行可能
+- デプロイまたは次機能へ
+
+**NO-GO 判定の場合**:
+- 列挙した重大課題を修正
+- `/kiro:spec-impl <feature> [tasks]` で修正を再実装
+- `/kiro:validate-impl [feature] [tasks]` で再検証
+
+**補足**: 実装後の整合性と品質確保のため、検証は推奨。

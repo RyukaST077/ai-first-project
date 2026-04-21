@@ -1,0 +1,92 @@
+---
+description: 対話型の技術設計品質レビューと検証
+allowed-tools: Read, Glob, Grep
+argument-hint: <feature-name>
+---
+
+# 技術設計バリデーション
+
+<background_information>
+- **ミッション**: 実装準備が整っているかを確認するため、技術設計の対話型品質レビューを行う
+- **成功条件**:
+  - 重要課題を特定（最大3件、最重要のみ）
+  - 強みも認識したバランス評価
+  - 根拠を伴う明確な GO/NO-GO 判定
+  - 必要時に改善可能なアクションを提示
+</background_information>
+
+<instructions>
+## 主タスク
+承認済み requirements と design を基に、機能 **$1** の設計品質を対話的にレビューする。
+
+## 実行手順
+
+1. **Load Context**:
+   - `{{KIRO_DIR}}/specs/$1/spec.json` を読み、言語とメタデータを確認
+   - `{{KIRO_DIR}}/specs/$1/requirements.md` を読み、要件を確認
+   - `{{KIRO_DIR}}/specs/$1/design.md` を読み、設計文書を確認
+   - **steering 文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（以下を含む）
+     - 既定ファイル: `structure.md`, `tech.md`, `product.md`
+     - モード設定に関係なく、すべてのカスタム steering
+     - 完全なプロジェクト記憶と文脈を提供
+
+2. **Read Review Guidelines**:
+   - `{{KIRO_DIR}}/settings/rules/design-review.md` を読み、レビュー基準と手順を確認
+
+3. **Execute Design Review**:
+   - design-review.md の流れ（分析 → 重要課題 → 強み → GO/NO-GO）に従う
+   - 課題は最重要3件までに限定
+   - ユーザーと対話的に進める
+   - 出力言語は spec.json 指定に従う
+
+4. **Provide Decision and Next Steps**:
+   - 根拠付きの明確な GO/NO-GO 判定
+   - 判定に応じた次の進め方を案内
+
+## 重要な制約
+- **完全性より品質保証**: 許容可能なリスクは受け入れる
+- **重要点のみ**: 成功に重大な影響がある課題のみ最大3件
+- **対話重視**: 一方通行評価ではなく、対話で進行
+- **バランス評価**: 強みと弱みの両方を扱う
+- **実行可能性**: すべての提案は実装可能であること
+</instructions>
+
+## ツールガイダンス
+- **Read first**: レビュー前に全コンテキスト（spec、steering、rules）を読み込む
+- 必要時は **Grep** でコードベースのパターンや統合を検証
+- **Interactive**: レビュー中はユーザーと継続的に対話する
+
+## 出力仕様
+spec.json 指定言語で以下を出力:
+
+1. **レビュー要約**: 設計品質と実装準備度の簡潔な概観（2〜3文）
+2. **重要課題**: design-review.md 形式で最大3件
+3. **設計の強み**: 1〜2件の肯定的観点
+4. **最終評価**: GO/NO-GO 判定、根拠、次ステップ
+
+**形式要件**:
+- 可読性のため Markdown 見出しを使用
+- design-review.md の出力フォーマットに従う
+- 要約は簡潔に保つ
+
+## 安全性とフォールバック
+
+### エラーシナリオ
+- **設計不足**: design.md がない場合は停止し、"Run `/kiro:spec-design $1` first to generate design document" と案内
+- **設計未生成**: spec.json で design 生成未記録なら警告してレビュー続行
+- **steering 空**: プロジェクト文脈不足でレビュー品質へ影響し得ることを警告
+- **言語未定義**: spec.json に言語がなければ英語（`en`）を既定にする
+
+### 次フェーズ: タスク生成
+
+**設計が検証を通過した場合（GO 判定）**:
+- フィードバックを確認し、必要なら修正
+- `/kiro:spec-tasks $1` で実装タスクを生成
+- または `/kiro:spec-tasks $1 -y` で自動承認して直接進行
+
+**設計の改訂が必要な場合（NO-GO 判定）**:
+- 指摘された重要課題を解消
+- `/kiro:spec-design $1` を再実行して改善
+- `/kiro:validate-design $1` で再検証
+
+**補足**: 設計検証は任意だが推奨。早期に課題を発見できる。
