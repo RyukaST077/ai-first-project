@@ -31,7 +31,7 @@ argument-hint: <feature-name> [-y] [--sequential]
 **承認を検証**:
 - `-y` フラグ指定時（$2 == "-y"）: spec.json の requirements/design を自動承認
 - それ以外: 両方承認済みか検証（未承認なら停止。Safety & Fallback 参照）
-- `--sequential` の有無で sequential mode を判定
+- `--sequential` の有無で逐次モードを判定
 
 ### ステップ2: 実装タスク生成
 
@@ -47,11 +47,11 @@ argument-hint: <feature-name> [-y] [--sequential]
 - 設計コンポーネントを漏れなく含める
 - タスク進行が論理的かつ段階的であることを検証
 - 単一サブタスク構造はメジャータスクへ昇格し、入れ物だけのメジャータスクに詳細を重複記載しない（テンプレートパターンに従う）
-- 並列条件を満たすタスクに `(P)` マーカーを付与（sequential mode では省略）
+- 並列条件を満たすタスクに `(P)` マーカーを付与（逐次モードでは省略）
 - 任意のテストカバレッジサブタスクは、MVP 後に延期可能かつコア実装で受け入れ基準が満たされる場合のみ `- [ ]*` を使用
 - 既存 tasks.md がある場合は新内容とマージ
 
-### ステップ3: Finalize
+### ステップ3: 仕上げ
 
 **書き込みと更新**:
 - `{{KIRO_DIR}}/specs/$1/tasks.md` を作成または更新
@@ -72,23 +72,23 @@ argument-hint: <feature-name> [-y] [--sequential]
 </instructions>
 
 ## ツールガイダンス
-- **Read first**: 生成前にコンテキスト・ルール・テンプレートを読み込む
-- **Write last**: 分析と検証完了後に tasks.md を生成
+- **最初に読み込む**: 生成前にコンテキスト・ルール・テンプレートを読み込む
+- **最後に書き込む**: 分析と検証完了後に tasks.md を生成
 
 ## 出力仕様
 
 spec.json 指定言語で簡潔に報告:
 
-1. **Status**: `{{KIRO_DIR}}/specs/$1/tasks.md` にタスクを生成したことを確認
-2. **Task Summary**:
+1. **ステータス**: `{{KIRO_DIR}}/specs/$1/tasks.md` にタスクを生成したことを確認
+2. **タスク要約**:
    - 合計: X 件のメジャータスク、Y 件のサブタスク
    - Z 件の要件をすべてカバー
    - サブタスク平均サイズ: 1〜3 時間
-3. **Quality Validation**:
+3. **品質検証**:
    - ✅ すべての要件がタスクに対応
    - ✅ タスク依存関係を検証
    - ✅ テストタスクを含む
-4. **Next Action**: タスク確認後の次ステップを案内
+4. **次アクション**: タスク確認後の次ステップを案内
 
 **形式**: 簡潔（200語未満）
 
@@ -98,23 +98,23 @@ spec.json 指定言語で簡潔に報告:
 
 **要件または設計が未承認**:
 - **実行停止**: requirements と design が承認済みでなければ続行不可
-- **ユーザーメッセージ**: "Requirements and design must be approved before task generation"
-- **推奨アクション**: "Run `/kiro:spec-tasks $1 -y` to auto-approve both and proceed"
+- **ユーザーメッセージ**: 「タスク生成前に要件と設計の承認が必要です」
+- **推奨アクション**: 「`/kiro:spec-tasks $1 -y` を実行し、両方を自動承認して続行してください」
 
 **要件または設計ファイル不足**:
 - **実行停止**: 両ドキュメントが必須
-- **ユーザーメッセージ**: "Missing requirements.md or design.md at `{{KIRO_DIR}}/specs/$1/`"
-- **推奨アクション**: "Complete requirements and design phases first"
+- **ユーザーメッセージ**: 「`{{KIRO_DIR}}/specs/$1/` に requirements.md または design.md がありません」
+- **推奨アクション**: 「先に要件フェーズと設計フェーズを完了してください」
 
 **要件カバレッジ不足**:
-- **警告**: "Not all requirements mapped to tasks. Review coverage."
+- **警告**: 「すべての要件がタスクに対応付けられていません。カバレッジを確認してください」
 - **ユーザー対応**: 意図的なギャップか確認、または再生成
 
-**Template/Rules Missing**:
-- **ユーザーメッセージ**: "Template or rules files missing in `{{KIRO_DIR}}/settings/`"
-- **Fallback**: 警告付きで基本的なインライン構造を使用
-- **推奨アクション**: "Check repository setup or restore template files"
-- **Missing Numeric Requirement IDs**:
+**テンプレート/ルール欠如**:
+- **ユーザーメッセージ**: 「`{{KIRO_DIR}}/settings/` にテンプレートまたはルールファイルがありません」
+- **フォールバック**: 警告付きで基本的なインライン構造を使用
+- **推奨アクション**: 「リポジトリ設定を確認するか、テンプレートファイルを復元してください」
+- **要件 ID の数値欠如**:
   - **実行停止**: requirements.md の全要件に数値 ID が必要。欠落があれば生成を停止し、修正を依頼する。
 
 ### 次フェーズ: 実装

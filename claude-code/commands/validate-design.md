@@ -21,7 +21,7 @@ argument-hint: <feature-name>
 
 ## 実行手順
 
-1. **Load Context**:
+1. **コンテキスト読込**:
    - `{{KIRO_DIR}}/specs/$1/spec.json` を読み、言語とメタデータを確認
    - `{{KIRO_DIR}}/specs/$1/requirements.md` を読み、要件を確認
    - `{{KIRO_DIR}}/specs/$1/design.md` を読み、設計文書を確認
@@ -30,16 +30,16 @@ argument-hint: <feature-name>
      - モード設定に関係なく、すべてのカスタム steering
      - 完全なプロジェクト記憶と文脈を提供
 
-2. **Read Review Guidelines**:
+2. **レビューガイドライン読込**:
    - `{{KIRO_DIR}}/settings/rules/design-review.md` を読み、レビュー基準と手順を確認
 
-3. **Execute Design Review**:
+3. **設計レビュー実行**:
    - design-review.md の流れ（分析 → 重要課題 → 強み → GO/NO-GO）に従う
    - 課題は最重要3件までに限定
    - ユーザーと対話的に進める
    - 出力言語は spec.json 指定に従う
 
-4. **Provide Decision and Next Steps**:
+4. **判定と次ステップの提示**:
    - 根拠付きの明確な GO/NO-GO 判定
    - 判定に応じた次の進め方を案内
 
@@ -52,9 +52,9 @@ argument-hint: <feature-name>
 </instructions>
 
 ## ツールガイダンス
-- **Read first**: レビュー前に全コンテキスト（spec、steering、rules）を読み込む
+- **最初に読み込む**: レビュー前に全コンテキスト（spec、steering、rules）を読み込む
 - 必要時は **Grep** でコードベースのパターンや統合を検証
-- **Interactive**: レビュー中はユーザーと継続的に対話する
+- **対話型**: レビュー中はユーザーと継続的に対話する
 
 ## 出力仕様
 spec.json 指定言語で以下を出力:
@@ -72,7 +72,7 @@ spec.json 指定言語で以下を出力:
 ## 安全性とフォールバック
 
 ### エラーシナリオ
-- **設計不足**: design.md がない場合は停止し、"Run `/kiro:spec-design $1` first to generate design document" と案内
+- **設計不足**: design.md がない場合は停止し、「先に `/kiro:spec-design $1` を実行して設計ドキュメントを生成してください」と案内
 - **設計未生成**: spec.json で design 生成未記録なら警告してレビュー続行
 - **steering 空**: プロジェクト文脈不足でレビュー品質へ影響し得ることを警告
 - **言語未定義**: spec.json に言語がなければ英語（`en`）を既定にする

@@ -24,8 +24,8 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 `{{KIRO_DIR}}/.memory-bank/steering/` の状態を確認:
 
-**Bootstrap Mode**: 空、またはコアファイル（product.md, tech.md, structure.md）が不足  
-**Sync Mode**: すべてのコアファイルが存在
+**Bootstrap モード**: 空、またはコアファイル（product.md, tech.md, structure.md）が不足  
+**Sync モード**: すべてのコアファイルが存在
 
 ---
 
@@ -37,14 +37,14 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
    - README, package.json などを `read_file` で確認
    - `grep` でパターン抽出
 3. パターンを抽出（列挙ではない）:
-   - Product: 目的、価値、コア機能
-   - Tech: フレームワーク、意思決定、規約
-   - Structure: 構成、命名、インポート
+   - プロダクト: 目的、価値、コア機能
+   - 技術: フレームワーク、意思決定、規約
+   - 構造: 構成、命名、インポート
 4. steering ファイルを生成（テンプレート準拠）
 5. `{{KIRO_DIR}}/settings/rules/steering-principles.md` の原則を読み込む
 6. レビュー用サマリーを提示
 
-**Focus**: ファイル/依存のカタログではなく、意思決定を導くパターン。
+**焦点**: ファイル/依存のカタログではなく、意思決定を導くパターン。
 
 ---
 
@@ -53,13 +53,13 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 1. 既存 steering（`{{KIRO_DIR}}/.memory-bank/steering/*.md`）をすべて読み込む
 2. コードベースの変更を分析（JIT）
 3. ドリフトを検出:
-   - **Steering → Code**: 欠落要素 → 警告
-   - **Code → Steering**: 新規パターン → 更新候補
-   - **Custom files**: 関連性を確認
+   - **Steering → コード**: 欠落要素 → 警告
+   - **コード → Steering**: 新規パターン → 更新候補
+   - **カスタムファイル**: 関連性を確認
 4. 更新案を提示（追加的更新、既存ユーザー内容を保持）
 5. 報告: 更新内容、警告、推奨事項
 
-**Update Philosophy**: 置換ではなく追加。ユーザー記述を保持する。
+**更新方針**: 置換ではなく追加。ユーザー記述を保持する。
 
 ---
 
@@ -67,12 +67,12 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 `{{KIRO_DIR}}/settings/rules/steering-principles.md` より:
 
-> "If new code follows existing patterns, steering shouldn't need updating."
+> 「新しいコードが既存パターンに従うなら、steering の更新は不要であるべき」
 
 網羅リストではなく、パターンと原則を文書化する。
 
-**Bad**: ディレクトリツリーの全ファイル列挙  
-**Good**: 具体例付きで構成パターンを説明
+**悪い例**: ディレクトリツリーの全ファイル列挙  
+**良い例**: 具体例付きで構成パターンを説明
 
 </instructions>
 
@@ -83,7 +83,7 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 - `grep`: パターン検索
 - `list_dir`: 構造分析
 
-**JIT Strategy**: 必要なタイミングで取得し、先読みし過ぎない。
+**JIT 戦略**: 必要なタイミングで取得し、先読みし過ぎない。
 
 ## 出力仕様
 
@@ -91,36 +91,36 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 ### Bootstrap:
 ```
-✅ Steering Created
+✅ Steering を作成しました
 
-## Generated:
-- product.md: [Brief description]
-- tech.md: [Key stack]
-- structure.md: [Organization]
+## 生成ファイル:
+- product.md: [簡潔な説明]
+- tech.md: [主要スタック]
+- structure.md: [構成]
 
-Review and approve as Source of Truth.
+信頼できる情報源として確認・承認してください。
 ```
 
 ### Sync:
 ```
-✅ Steering Updated
+✅ Steering を更新しました
 
-## Changes:
+## 変更内容:
 - tech.md: React 18 → 19
-- structure.md: Added API pattern
+- structure.md: API パターンを追加
 
-## Code Drift:
-- Components not following import conventions
+## コードドリフト:
+- インポート規約に従っていないコンポーネント
 
-## Recommendations:
-- Consider api-standards.md
+## 推奨事項:
+- api-standards.md の追加を検討
 ```
 
 ## 例
 
 ### Bootstrap
 **入力**: 空の steering、React TypeScript プロジェクト  
-**出力**: "Feature-first", "TypeScript strict", "React 19" などのパターンを含む3ファイル
+**出力**: 「Feature-first」「TypeScript strict」「React 19」などのパターンを含む3ファイル
 
 ### Sync
 **入力**: 既存 steering と新しい `/api` ディレクトリ  
@@ -128,16 +128,16 @@ Review and approve as Source of Truth.
 
 ## 安全性とフォールバック
 
-- **Security**: キー/パスワード/秘密情報は記載しない（原則参照）
-- **Uncertainty**: 両方の可能性を報告し、ユーザー確認を取る
-- **Preservation**: 迷ったら置換せず追加更新
+- **セキュリティ**: キー/パスワード/秘密情報は記載しない（原則参照）
+- **不確実性**: 両方の可能性を報告し、ユーザー確認を取る
+- **保全性**: 迷ったら置換せず追加更新
 
 ## 注記
 
 - `{{KIRO_DIR}}/.memory-bank/steering/*.md` はすべてプロジェクト記憶として読み込まれる
 - テンプレートと原則は外部カスタマイズ可能
 - 焦点はカタログ化ではなくパターン化
-- "Golden Rule": 既存パターンに沿う新規コードなら steering 更新は不要
+- 「黄金律」: 既存パターンに沿う新規コードなら steering 更新は不要
 - エージェント固有ツールディレクトリ（例: `.cursor/`, `.gemini/`, `.claude/`）は文書化しない
 - `{{KIRO_DIR}}/settings/` は steering に記録しない（設定はメタデータであり、プロジェクト知識ではない）
 - `{{KIRO_DIR}}/specs/` と `{{KIRO_DIR}}/.memory-bank/steering/` の軽い参照は可。他の `.kiro/` ディレクトリへの言及は避ける

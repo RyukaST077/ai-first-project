@@ -28,7 +28,7 @@ argument-hint: [feature-name] [task-numbers]
 - 会話履歴から `/kiro:spec-impl <feature> [tasks]` コマンドを解析
 - 各実行の feature 名とタスク番号を抽出
 - feature ごとに実装済みタスクを集約
-- 検出結果を報告（例: "user-auth: 1.1, 1.2, 1.3"）
+- 検出結果を報告（例: 「user-auth: 1.1, 1.2, 1.3」）
 - 履歴がなければ `{{KIRO_DIR}}/specs/` を走査し、`[x]` タスクがある feature を検出
 
 **feature のみ指定**（`$1` あり、`$2` 空）:
@@ -53,36 +53,36 @@ argument-hint: [feature-name] [task-numbers]
 
 #### タスク完了チェック
 - tasks.md のチェックボックスが `[x]`
-- 未完了なら "Task not marked complete" として報告
+- 未完了なら「タスクが完了マークされていません」として報告
 
 #### テストカバレッジチェック
 - タスク関連機能のテストが存在
 - テストが通過（失敗/エラーなし）
 - Bash でテストコマンド実行（例: `npm test`, `pytest`）
-- 失敗またはテスト不足なら "Test coverage issue"
+- 失敗またはテスト不足なら「テストカバレッジ不足」
 
 #### 要件トレーサビリティ
 - タスク関連の EARS 要件を特定
 - Grep で実装に要件カバーの証跡があるか確認
-- 追跡不能なら "Requirement not implemented"
+- 追跡不能なら「要件が実装されていません」
 
 #### 設計整合性
 - design.md の構造が実装に反映されているか確認
 - 主要インターフェース、コンポーネント、モジュールの存在を検証
 - Grep/LS でファイル構造を確認
-- 乖離があれば "Design deviation"
+- 乖離があれば「設計との乖離」
 
 #### 回帰チェック
 - 可能ならフルテストスイートを実行
 - 既存テスト破壊がないか確認
-- 回帰があれば "Regression detected"
+- 回帰があれば「回帰検出」
 
 ### 4. レポート生成
 
 spec.json 指定言語で要約を提供:
 - feature 別の検証サマリー
 - カバレッジレポート（tasks, requirements, design）
-- 重要度付きの課題・乖離（Critical/Warning）
+- 重要度付きの課題・乖離（重大／警告）
 - GO/NO-GO 判定
 
 ## 重要な制約
@@ -104,9 +104,9 @@ spec.json 指定言語で要約を提供:
 spec.json 指定言語で以下を出力:
 
 1. **検証対象**: 自動検出時は対象 feature と tasks を明示
-2. **検証サマリー**: feature ごとの pass/fail 件数
+2. **検証サマリー**: 機能ごとの合格／不合格件数
 3. **課題一覧**: 重要度と場所付きの失敗項目
-4. **カバレッジ**: requirements/design/tasks の達成率
+4. **カバレッジ**: 要件／設計／タスクの達成率
 5. **判定**: GO（次フェーズへ進行可）/ NO-GO（修正必要）
 
 **形式要件**:
@@ -117,7 +117,7 @@ spec.json 指定言語で以下を出力:
 ## 安全性とフォールバック
 
 ### エラーシナリオ
-- **実装未検出**: 履歴に `/kiro:spec-impl` がなく `[x]` タスクもない場合は "No implementations detected"
+- **実装未検出**: 履歴に `/kiro:spec-impl` がなく `[x]` タスクもない場合は「実装が検出されませんでした」
 - **テストコマンド不明**: フレームワーク不明なら警告し、テスト検証をスキップ（手動確認を要求）
 - **spec ファイル不足**: spec.json/requirements.md/design.md が欠けていれば停止
 - **言語未定義**: spec.json に言語がなければ英語（`en`）を既定にする

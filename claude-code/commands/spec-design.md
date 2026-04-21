@@ -71,10 +71,10 @@ argument-hint: <feature-name> [-y]
 - 想定アーキテクチャパターンと境界候補（詳細は `research.md` へ）
 - 将来タスクの並列化に関する考慮（依存関係を `research.md` に記録）
 
-4. **調査結果を Research Log に永続化**:
+4. **調査結果を調査ログに永続化**:
 - 共有テンプレートを使って `{{KIRO_DIR}}/specs/$1/research.md` を作成または更新
-- 調査範囲と主要発見を Summary に記載
-- Research Log の各トピックに、情報源と示唆を記録
+- 調査範囲と主要発見をサマリーに記載
+- 調査ログの各トピックに、情報源と示唆を記録
 - テンプレートの各節で、アーキテクチャ評価・設計判断・リスクを記録
 - `research.md` の記述言語は spec.json 指定に従う
 
@@ -99,11 +99,11 @@ argument-hint: <feature-name> [-y]
 - `updated_at` タイムスタンプを更新
 
 ## 重要制約
- - **Type Safety**:
+ - **型安全性**:
    - プロジェクト技術スタックに沿った強い型付けを徹底する。
    - 静的型付け言語では、明示的な型/インターフェースを定義し、危険なキャストを避ける。
    - TypeScript では `any` を絶対に使わず、正確な型とジェネリクスを優先する。
-   - 動的型付け言語では、利用可能な型ヒント/アノテーション（例: Python type hints）を付与し、境界で入力検証を行う。
+   - 動的型付け言語では、利用可能な型ヒント/アノテーション（例: Python の型ヒント）を付与し、境界で入力検証を行う。
    - 公開インターフェースと契約を明確に文書化し、コンポーネント横断の型安全性を確保する。
 - **最新情報**: 外部依存・ベストプラクティスには WebSearch/WebFetch を利用
 - **ステアリング整合**: ステアリング文脈の既存アーキテクチャパターンを尊重
@@ -113,10 +113,10 @@ argument-hint: <feature-name> [-y]
 </instructions>
 
 ## ツールガイダンス
-- **Read first**: 実行前に全コンテキスト（spec、steering、templates、rules）を読み込む
-- **Research when uncertain**: 外部依存、API、最新ベストプラクティスの不確実性は WebSearch/WebFetch で解消
-- **Analyze existing code**: Grep でコードベースのパターンと統合ポイントを調査
-- **Write last**: 調査・分析完了後に design.md を生成
+- **最初に読み込む**: 実行前に全コンテキスト（spec、steering、templates、rules）を読み込む
+- **不確実なら調査**: 外部依存、API、最新ベストプラクティスの不確実性は WebSearch/WebFetch で解消
+- **既存コードを分析**: Grep でコードベースのパターンと統合ポイントを調査
+- **最後に書き込む**: 調査・分析完了後に design.md を生成
 
 ## 出力仕様
 
@@ -124,11 +124,11 @@ argument-hint: <feature-name> [-y]
 
 spec.json 指定言語で簡潔に以下を提示:
 
-1. **Status**: `{{KIRO_DIR}}/specs/$1/design.md` に設計文書を生成したことを確認
-2. **Discovery Type**: 実行した調査プロセス（full/light/minimal）
-3. **Key Findings**: 設計に影響した `research.md` の重要知見を2〜3点
-4. **Next Action**: 承認ワークフローの案内（Safety & Fallback 参照）
-5. **Research Log**: `research.md` を最新判断で更新したことを確認
+1. **ステータス**: `{{KIRO_DIR}}/specs/$1/design.md` に設計文書を生成したことを確認
+2. **調査タイプ**: 実行した調査プロセス（full/light/minimal）
+3. **主要な発見**: 設計に影響した `research.md` の重要知見を2〜3点
+4. **次アクション**: 承認ワークフローの案内（安全性とフォールバック参照）
+5. **調査ログ**: `research.md` を最新判断で更新したことを確認
 
 **形式**: 簡潔な Markdown（200語未満）。これはコマンド出力であり、設計ドキュメント本文ではない。
 
@@ -140,28 +140,28 @@ spec.json 指定言語で簡潔に以下を提示:
 
 **要件未承認**:
 - **実行停止**: 承認済み要件なしでは続行不可
-- **ユーザーメッセージ**: "Requirements not yet approved. Approval required before design generation."
-- **推奨アクション**: "Run `/kiro:spec-design $1 -y` to auto-approve requirements and proceed"
+- **ユーザーメッセージ**: 「要件が未承認です。設計生成の前に承認が必要です。」
+- **推奨アクション**: 「`/kiro:spec-design $1 -y` を実行して要件を自動承認し、続行してください」
 
 **要件ファイル不足**:
 - **実行停止**: 要件ドキュメントが必須
-- **ユーザーメッセージ**: "No requirements.md found at `{{KIRO_DIR}}/specs/$1/requirements.md`"
-- **推奨アクション**: "Run `/kiro:spec-requirements $1` to generate requirements first"
+- **ユーザーメッセージ**: 「`{{KIRO_DIR}}/specs/$1/requirements.md` に requirements.md が存在しません」
+- **推奨アクション**: 「先に `/kiro:spec-requirements $1` を実行して要件を生成してください」
 
-**Template Missing**:
-- **ユーザーメッセージ**: "Template file missing at `{{KIRO_DIR}}/settings/templates/specs/design.md`"
-- **推奨アクション**: "Check repository setup or restore template file"
-- **Fallback**: 警告付きで基本的なインライン構造を使用
+**テンプレート欠如**:
+- **ユーザーメッセージ**: 「`{{KIRO_DIR}}/settings/templates/specs/design.md` にテンプレートファイルがありません」
+- **推奨アクション**: 「リポジトリ設定を確認するか、テンプレートファイルを復元してください」
+- **フォールバック**: 警告付きで基本的なインライン構造を使用
 
-**Steering Context Missing**:
-- **警告**: "Steering directory empty or missing - design may not align with project standards"
+**Steering コンテキスト欠如**:
+- **警告**: 「Steering ディレクトリが空または存在しません。設計がプロジェクト標準と整合しない可能性があります」
 - **続行**: 生成は続行するが、出力に制約として明記
 
-**Discovery Complexity Unclear**:
+**調査の複雑度が不明瞭**:
 - **デフォルト**: フル調査プロセス（`{{KIRO_DIR}}/settings/rules/design-discovery-full.md`）を使用
 - **理由**: 重要文脈の取りこぼしより、過剰調査を優先
-- **Invalid Requirement IDs**:
-  - **実行停止**: requirements.md に数値 ID がない、または非数値見出し（例: "Requirement A"）を使用している場合は停止し、修正を依頼する。
+- **不正な要件 ID**:
+  - **実行停止**: requirements.md に数値 ID がない、または非数値見出し（例: 「Requirement A」）を使用している場合は停止し、修正を依頼する。
 
 ### 次フェーズ: タスク生成
 

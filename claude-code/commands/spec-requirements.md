@@ -21,7 +21,7 @@ argument-hint: <feature-name>
 
 ## 実行手順
 
-1. **Load Context**:
+1. **コンテキスト読込**:
    - `{{KIRO_DIR}}/specs/$1/spec.json` を読み、言語とメタデータを確認
    - `{{KIRO_DIR}}/specs/$1/requirements.md` を読み、プロジェクト説明を確認
    - **ステアリング文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（以下を含む）
@@ -29,17 +29,17 @@ argument-hint: <feature-name>
      - モード設定に関係なく、すべてのカスタム steering ファイル
      - これにより、完全なプロジェクト記憶と文脈を得る
 
-2. **Read Guidelines**:
+2. **ガイドライン読込**:
    - `{{KIRO_DIR}}/settings/rules/ears-format.md` を読み、EARS 構文ルールを確認
    - `{{KIRO_DIR}}/settings/templates/specs/requirements.md` を読み、文書構造を確認
 
-3. **Generate Requirements**:
+3. **要件生成**:
    - プロジェクト説明から初期要件を作成
    - 関連機能を論理的な要件領域にグルーピング
    - すべての受け入れ基準に EARS 形式を適用
    - 記述言語は spec.json 指定に従う
 
-4. **Update Metadata**:
+4. **メタデータ更新**:
    - `phase: "requirements-generated"` を設定
    - `approvals.requirements.generated: true` を設定
    - `updated_at` タイムスタンプを更新
@@ -53,8 +53,8 @@ argument-hint: <feature-name>
 </instructions>
 
 ## ツールガイダンス
-- **Read first**: 生成前に全コンテキスト（spec、steering、rules、templates）を読み込む
-- **Write last**: 生成完了後に requirements.md を更新
+- **最初に読み込む**: 生成前に全コンテキスト（spec、steering、rules、templates）を読み込む
+- **最後に書き込む**: 生成完了後に requirements.md を更新
 - 外部ドメイン知識が必要な場合のみ **WebSearch/WebFetch** を使用
 
 ## 出力仕様

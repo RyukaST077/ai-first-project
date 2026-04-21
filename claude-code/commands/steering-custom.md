@@ -27,7 +27,7 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
    - `{{KIRO_DIR}}/settings/templates/steering-custom/{name}.md` があれば読み込む
    - 出発点として使い、プロジェクトに合わせて調整
 
-3. **コードベースを分析（JIT）**:
+3. **コードベースを分析（JIT 戦略）**:
    - 関連ファイルを **Glob** で探索
    - 既存実装を **Read** で確認
    - 特定パターンを **Grep** で抽出
@@ -59,11 +59,11 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 
 `{{KIRO_DIR}}/settings/rules/steering-principles.md` より:
 
-- **Patterns over lists**: すべてを列挙せず、パターンを文書化
-- **Single domain**: 1ファイル1トピック
-- **Concrete examples**: コード例でパターンを示す
-- **Maintainable size**: 目安は100〜200行
-- **Security first**: 秘密情報・機微データは記載しない
+- **列挙よりパターン**: すべてを列挙せず、パターンを文書化
+- **単一ドメイン**: 1ファイル1トピック
+- **具体例重視**: コード例でパターンを示す
+- **保守可能なサイズ**: 目安は100〜200行
+- **セキュリティ最優先**: 秘密情報・機微データは記載しない
 
 </instructions>
 
@@ -74,41 +74,41 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Glob, Grep, LS
 - **Grep**: 特定パターン検索
 - **LS**: 関連構造の把握
 
-**JIT Strategy**: 必要なタイプの steering を作る時だけテンプレートを読む。
+**JIT 戦略**: 必要なタイプの steering を作る時だけテンプレートを読む。
 
 ## 出力仕様
 
 チャット要約のみ（ファイルは直接作成）。
 
 ```
-✅ Custom Steering Created
+✅ カスタム Steering を作成しました
 
-## Created:
+## 作成ファイル:
 - {{KIRO_DIR}}/.memory-bank/steering/api-standards.md
 
-## Based On:
-- Template: api-standards.md
-- Analyzed: src/api/ directory patterns
-- Extracted: REST conventions, error format
+## 参照元:
+- テンプレート: api-standards.md
+- 分析対象: src/api/ ディレクトリのパターン
+- 抽出内容: REST 規約、エラー形式
 
-## Content:
-- Endpoint naming patterns
-- Request/response format
-- Error handling conventions
-- Authentication approach
+## 内容:
+- エンドポイント命名パターン
+- リクエスト/レスポンス形式
+- エラーハンドリング規約
+- 認証アプローチ
 
-Review and customize as needed.
+必要に応じて確認・カスタマイズしてください。
 ```
 
 ## 例
 
 ### 成功例: API 標準
-**入力**: "Create API standards steering"  
+**入力**: 「API 標準の steering を作成して」  
 **アクション**: テンプレート読込、src/api/ を分析、パターン抽出  
 **出力**: プロジェクト固有の REST 規約を含む api-standards.md
 
 ### 成功例: テスト戦略
-**入力**: "Document our testing approach"  
+**入力**: 「テスト方針を文書化して」  
 **アクション**: テンプレート読込、テストファイル分析、パターン抽出  
 **出力**: テスト構成とモック戦略をまとめた testing.md
 

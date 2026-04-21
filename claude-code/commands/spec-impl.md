@@ -1,108 +1,108 @@
 ---
-description: Execute spec tasks using TDD methodology
+description: TDD 手法で仕様タスクを実行する
 allowed-tools: Bash, Read, Write, Edit, MultiEdit, Grep, Glob, LS, WebFetch, WebSearch
 argument-hint: <feature-name> [task-numbers]
 ---
 
-# Implementation Task Executor
+# 実装タスク実行
 
 <background_information>
-- **Mission**: Execute implementation tasks using Test-Driven Development methodology based on approved specifications
-- **Success Criteria**:
-  - All tests written before implementation code
-  - Code passes all tests with no regressions
-  - Tasks marked as completed in tasks.md
-  - Implementation aligns with design and requirements
+- **ミッション**: 承認済み仕様に基づき、テスト駆動開発（TDD）手法で実装タスクを実行する
+- **成功条件**:
+  - 実装コードより前にすべてのテストを記述している
+  - コードが全テストを通過し、回帰を起こしていない
+  - tasks.md 上でタスクが完了としてマークされている
+  - 実装が設計および要件と整合している
 </background_information>
 
 <instructions>
-## Core Task
-Execute implementation tasks for feature **$1** using Test-Driven Development.
+## 主タスク
+テスト駆動開発を用いて、機能 **$1** の実装タスクを実行する。
 
-## Execution Steps
+## 実行手順
 
-### Step 1: Load Context
+### ステップ1: コンテキスト読込
 
-**Read all necessary context**:
+**必要なコンテキストをすべて読み込む**:
 - `{{KIRO_DIR}}/specs/$1/spec.json`, `requirements.md`, `design.md`, `tasks.md`
-- **Entire `{{KIRO_DIR}}/.memory-bank/steering/` directory** for complete project memory
+- **`{{KIRO_DIR}}/.memory-bank/steering/` ディレクトリ全体**（完全なプロジェクト記憶として）
 
-**Validate approvals**:
-- Verify tasks are approved in spec.json (stop if not, see Safety & Fallback)
+**承認を検証**:
+- spec.json でタスクが承認済みかを確認（未承認なら停止。Safety & Fallback 参照）
 
-### Step 2: Select Tasks
+### ステップ2: タスク選択
 
-**Determine which tasks to execute**:
-- If `$2` provided: Execute specified task numbers (e.g., "1.1" or "1,2,3")
-- Otherwise: Execute all pending tasks (unchecked `- [ ]` in tasks.md)
+**実行するタスクを決定**:
+- `$2` が指定された場合: 指定されたタスク番号を実行（例: "1.1" や "1,2,3"）
+- それ以外: 未完了（tasks.md の `- [ ]`）タスクをすべて実行
 
-### Step 3: Execute with TDD
+### ステップ3: TDD で実行
 
-For each selected task, follow Kent Beck's TDD cycle:
+選択した各タスクについて、Kent Beck の TDD サイクルに従う:
 
-1. **RED - Write Failing Test**:
-   - Write test for the next small piece of functionality
-   - Test should fail (code doesn't exist yet)
-   - Use descriptive test names
+1. **RED - 失敗するテストを書く**:
+   - 次に実装する小さな機能単位に対するテストを書く
+   - テストは失敗する（コードがまだ存在しないため）
+   - 説明的なテスト名を用いる
 
-2. **GREEN - Write Minimal Code**:
-   - Implement simplest solution to make test pass
-   - Focus only on making THIS test pass
-   - Avoid over-engineering
+2. **GREEN - 最小限のコードを書く**:
+   - テストを通過させる最もシンプルな実装を書く
+   - 「このテスト」を通すことだけに集中する
+   - 過剰設計を避ける
 
-3. **REFACTOR - Clean Up**:
-   - Improve code structure and readability
-   - Remove duplication
-   - Apply design patterns where appropriate
-   - Ensure all tests still pass after refactoring
+3. **REFACTOR - 整理する**:
+   - コード構造と可読性を改善する
+   - 重複を取り除く
+   - 適切な箇所でデザインパターンを適用する
+   - リファクタ後も全テストが通過することを保証する
 
-4. **VERIFY - Validate Quality**:
-   - All tests pass (new and existing)
-   - No regressions in existing functionality
-   - Code coverage maintained or improved
+4. **VERIFY - 品質を検証する**:
+   - すべてのテスト（新規・既存）が通過
+   - 既存機能に回帰がない
+   - コードカバレッジが維持または改善されている
 
-5. **MARK COMPLETE**:
-   - Update checkbox from `- [ ]` to `- [x]` in tasks.md
+5. **完了マーク**:
+   - tasks.md のチェックボックスを `- [ ]` から `- [x]` に更新
 
-## Critical Constraints
-- **TDD Mandatory**: Tests MUST be written before implementation code
-- **Task Scope**: Implement only what the specific task requires
-- **Test Coverage**: All new code must have tests
-- **No Regressions**: Existing tests must continue to pass
-- **Design Alignment**: Implementation must follow design.md specifications
+## 重要制約
+- **TDD 必須**: 実装コードよりも先にテストを書かなければならない
+- **タスク範囲**: 当該タスクが要求する範囲のみ実装する
+- **テストカバレッジ**: すべての新規コードはテストを持つこと
+- **回帰禁止**: 既存テストは継続して通過しなければならない
+- **設計整合**: 実装は design.md の仕様に従うこと
 </instructions>
 
-## Tool Guidance
-- **Read first**: Load all context before implementation
-- **Test first**: Write tests before code
-- Use **WebSearch/WebFetch** for library documentation when needed
+## ツールガイダンス
+- **最初に読み込む**: 実装前にすべてのコンテキストをロード
+- **最初にテスト**: コードより先にテストを書く
+- 必要に応じてライブラリドキュメント参照に **WebSearch/WebFetch** を使用
 
-## Output Description
+## 出力仕様
 
-Provide brief summary in the language specified in spec.json:
+spec.json 指定言語で簡潔に報告:
 
-1. **Tasks Executed**: Task numbers and test results
-2. **Status**: Completed tasks marked in tasks.md, remaining tasks count
+1. **実行タスク**: タスク番号とテスト結果
+2. **状態**: tasks.md に反映した完了タスク、残タスク件数
 
-**Format**: Concise (under 150 words)
+**形式**: 簡潔（150語未満）
 
-## Safety & Fallback
+## 安全性とフォールバック
 
 ### エラーシナリオ
 
-**タスクが承認されていないか、仕様ファイルが不足**:
-- **実行停止**: All spec files must exist and tasks must be approved
-- **推奨アクション**: "Complete previous phases: `/kiro:spec-requirements`, `/kiro:spec-design`, `/kiro:spec-tasks`"
+**タスク未承認、または仕様ファイルが不足**:
+- **実行停止**: すべての仕様ファイルが存在し、タスクが承認済みである必要がある
+- **推奨アクション**: 「先に前フェーズを完了してください: `/kiro:spec-requirements`, `/kiro:spec-design`, `/kiro:spec-tasks`」
 
 **テスト失敗**:
-- **Stop Implementation**: Fix failing tests before continuing
-- **Action**: Debug and fix, then re-run
+- **実装停止**: 失敗しているテストを解消するまで続行しない
+- **アクション**: デバッグして修正し、再実行する
 
 ### タスク実行
 
-**Execute specific task(s)**:
-- `/kiro:spec-impl $1 1.1` - Single task
-- `/kiro:spec-impl $1 1,2,3` - Multiple tasks
+**特定タスクを実行**:
+- `/kiro:spec-impl $1 1.1` - 単一タスク
+- `/kiro:spec-impl $1 1,2,3` - 複数タスク
 
-**Execute all pending**:
-- `/kiro:spec-impl $1` - All unchecked tasks
+**未完了タスクをすべて実行**:
+- `/kiro:spec-impl $1` - 未チェックタスクをすべて実行

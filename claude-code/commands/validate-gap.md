@@ -21,7 +21,7 @@ argument-hint: <feature-name>
 
 ## 実行手順
 
-1. **Load Context**:
+1. **コンテキスト読込**:
    - `{{KIRO_DIR}}/specs/$1/spec.json` を読み、言語とメタデータを確認
    - `{{KIRO_DIR}}/specs/$1/requirements.md` を読み、要件を確認
    - **steering 文脈をすべて読み込む**: `{{KIRO_DIR}}/.memory-bank/steering/` 全体（以下を含む）
@@ -29,17 +29,17 @@ argument-hint: <feature-name>
      - モード設定に関係なく、すべてのカスタム steering
      - 完全なプロジェクト記憶と文脈を提供
 
-2. **Read Analysis Guidelines**:
+2. **分析ガイドライン読込**:
    - `{{KIRO_DIR}}/settings/rules/gap-analysis.md` を読み、包括分析フレームワークを確認
 
-3. **Execute Gap Analysis**:
+3. **ギャップ分析の実行**:
    - gap-analysis.md フレームワークに従って調査
    - Grep と Read で既存コードベースを分析
    - 必要時は WebSearch/WebFetch で外部依存を調査
-   - 複数の実装アプローチ（extend/new/hybrid）を評価
+   - 複数の実装アプローチ（拡張／新規／ハイブリッド）を評価
    - 出力言語は spec.json 指定に従う
 
-4. **Generate Analysis Document**:
+4. **分析ドキュメントの生成**:
    - gap-analysis.md の出力ガイドに沿って包括的分析を作成
    - トレードオフ付きで複数の実行可能案を提示
    - 追加調査が必要な領域を明示
@@ -52,10 +52,10 @@ argument-hint: <feature-name>
 </instructions>
 
 ## ツールガイダンス
-- **Read first**: 分析前に全コンテキスト（spec、steering、rules）を読み込む
-- **Grep extensively**: パターン、規約、統合ポイントを広く探索
+- **最初に読み込む**: 分析前に全コンテキスト（spec、steering、rules）を読み込む
+- **広く Grep**: パターン、規約、統合ポイントを広く探索
 - **WebSearch/WebFetch**: 必要に応じて外部依存とベストプラクティスを調査
-- **Write last**: 調査完了後に分析を生成
+- **最後に書き込む**: 調査完了後に分析を生成
 
 ## 出力仕様
 spec.json 指定言語で以下を出力:
@@ -72,7 +72,7 @@ spec.json 指定言語で以下を出力:
 ## 安全性とフォールバック
 
 ### エラーシナリオ
-- **要件不足**: requirements.md がなければ停止し、"Run `/kiro:spec-requirements $1` first to generate requirements" と案内
+- **要件不足**: requirements.md がなければ停止し、「先に `/kiro:spec-requirements $1` を実行して要件を生成してください」と案内
 - **要件未承認**: 未承認でも警告のうえ続行（ギャップ分析は要件見直しにも有用）
 - **steering 空**: プロジェクト文脈不足で分析品質へ影響し得ることを警告
 - **複雑統合が不明瞭**: ブロックせず、設計フェーズでの包括調査事項として明示
