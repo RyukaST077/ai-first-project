@@ -1,125 +1,287 @@
 ---
 name: implement
-description: タスクリストに並んだコミットタスクを番号順に1件ずつ実装する。`tasks.md` や `task_list.md` を起点に、参照設計書を確認しながら、進捗確認、既存実装の調査、最小変更での実装、検証、自己チェック、タスクリスト更新までを一連で進めるときに使う。
-argument-hint: タスクリストのパス指定してください。例: `tasks.md` や `task_list.md`
-disable-model-invocation: true
+description: Use this skill to implement commit tasks listed in a task list one at a time in numeric order. Starting from `tasks.md` or `task_list.md`, review the referenced design documents, check progress, investigate the existing implementation, compare against the design, make the smallest necessary changes, validate the result, perform an independent review, and update the task list. When appropriate, use subagents to split investigation, design comparison, and validation work, while keeping final judgment and integration under the parent agent.
+argument-hint: Please specify the path to the task list, for example: `tasks.md` or `task_list.md`
+
 ---
 
 # Implement
 
-## 守ること
+## Core Rules
 
-1. コミットタスクは番号順に 1 件ずつ処理する。飛ばさない。並行しない。
-2. すでに完了しているコミットタスクは再実施しない。
-3. 開始前に必ず進捗確認を行い、未完了の最小 `C-XXX` から再開する。
-4. 各コミットタスクに記載された参照設計書を実装前に必ず確認する。
-5. 変更は原則として対象タスクに必要な最小範囲に限定する。
-6. 参照設計書に明記された要件を優先し、既存実装とのずれがある場合は差分を明示して扱う。
-7. 既存コードの流儀を先に読み取り、それに合わせる。
-8. 不確定要素があっても作業は止めず、必要最小限の仮定を置いて進める。
-9. 変更はビルドやテストが通る単位にまとめる。
-10. タスク完了後は、 `$ARGUMENTS` の既存表記に合わせて完了チェックを更新する。
-11. 設計書にある ID や定数は、大小文字や記号を含めて記載どおりに実装する。
+1. Process commit tasks one at a time in numeric order. Do not skip any task.
+2. Only one commit task may be considered in progress for completion at a time. Do not implement multiple `C-XXX` tasks in parallel.
+3. However, **within a single commit task**, you may delegate investigation, design comparison, impact analysis, validation planning, and independent review to subagents.
+4. Do not redo commit tasks that are already complete.
+5. Before starting, always check progress and resume from the smallest incomplete `C-XXX`.
+6. Before implementation, always review the referenced design document(s) for that commit task.
+7. As a rule, keep changes limited to the smallest scope necessary for the target task.
+8. Prioritize requirements explicitly written in the referenced design document(s). If they differ from the existing implementation, identify and handle the gap explicitly.
+9. Read the style of the existing code first, then follow it.
+10. Even if there are uncertainties, do not stop. Make the smallest necessary assumptions and continue.
+11. Group changes into units that can pass build and test.
+12. After completing a task, update the completion check in `$ARGUMENTS` according to its existing notation.
+13. Implement IDs and constants from the design documents exactly as written, including case and symbols.
+14. Treat subagent output as reference material. **The parent agent is responsible for adoption decisions, implementation integration, completion judgment, and updating `$ARGUMENTS`.**
+15. If subagent results conflict, resolve them using this priority order: **design documents > actual implementation > task list wording > inference**.
+16. Use subagents to improve quality and speed, but do not let delegation increase scope, duplicate effort, or weaken accountability.
 
-## 開始手順
+## Subagent Policy
 
-### 1. 進捗確認
+### Purpose
 
-開始時に以下を必ず行う。
+- The parent agent owns responsibility for completing the target commit task.
+- Subagents help divide investigation, comparison, and validation work inside a single commit task.
+- The processing order of commit tasks must not be changed.
 
-- `$ARGUMENTS` を読み、各 `C-XXX` を `完了 / 未完了 / 不明` に分類する
-- 各 `C-XXX` に紐づく参照設計書を確認し、そのタスクの目的、制約、受け入れ条件を整理する
-- ブランチ、差分、関連ファイル、テスト状況を見て、 `$ARGUMENTS` の状態と実装実態の矛盾を確認する
-- 矛盾があれば、ファイルの存在や差分など最小限の根拠で解消する
+### Work that may be delegated to subagents
 
-開始コミットタスクの決定ルール:
+- Extracting requirements from referenced design documents
+- Exploring the existing implementation
+- Identifying impact scope
+- Investigating existing coding patterns
+- Checking mismatches and inconsistencies
+- Listing test perspectives
+- Performing independent post-implementation review
+- Organizing viewpoints around logs, exceptions, DB, ORM, APIs, and config differences
 
-- 原則は未完了の最小 `C-XXX`
-- 実装済みなのに未チェックなら、根拠を示して先にチェック更新してから次へ進む
-- 状態不明のタスクがあれば、そのタスクから着手して状況を確定させる
-- 番号順は崩さない
+### Work that must not be delegated to subagents
 
-### 2.  `$ARGUMENTS` 補正
+- Deciding which `C-XXX` to start
+- Running multiple commit tasks in parallel
+- Making the final implementation decision
+- Final integration of code changes
+- Updating `$ARGUMENTS`
+- Judging task completion
+- Adopting implementation decisions that conflict with the design documents
 
-- 完了が明らかな未チェック項目は、根拠を添えてチェックを付ける
-- チェック済みだが未完了なら、チェックを外さずに不整合メモを残してそのタスクから着手する
+### When subagents should be used
 
-## 各コミットタスクの進め方
+Use subagents where appropriate if any of the following apply:
 
-各タスクは原則として以下の順で進める。
+- There are multiple referenced design documents
+- Investigation of existing implementation patterns is needed
+- The impact spans multiple directories or layers
+- Differences between design and implementation need to be checked
+- There are many test perspectives or regression risks
+- It is safer to separate pre-implementation review and post-implementation review
 
-### Step 1. 参照設計書の確認
+You do not need to force subagent use for small changes such as:
 
-- そのコミットタスクに紐づく参照設計書を、実装前に必ず読む
-- 対象範囲、要件、制約、受け入れ条件、ID や定数を先に抜き出す
-- 既存実装と設計書の差分があれば、この時点で論点として整理する
+- A clear change within a single file
+- A constant change that requires no investigation
+- A simple extension of an existing pattern
 
-### Step 2. 事前確認
+### Subagent orchestration rules
 
-- タスクの目的と成功条件を 1 から 3 行で要約する
-- 参照設計書の対象箇所と、今回の実装で満たすべき要件を要約する
-- そのタスクが未完了である根拠、または完了済みでスキップできる根拠を書く
-- 完了済みなら `$ARGUMENTS` 更新だけ行い、次のタスクへ進む
-- 次を調査して整理する
-  - パッケージ構成、命名規則
-  - 例外設計
-  - ログ方針
-  - DB や ORM の方針
-  - テスト方針
-- 参照設計書に紐づく実装箇所と影響範囲を列挙する
+- Use at most **2 to 3 subagents** for a single commit task unless the scope is clearly large.
+- Assign **non-overlapping roles** to subagents whenever possible.
+- Recommended role split:
+  - **Design reviewer**: extracts requirements, constraints, and acceptance criteria from the design documents
+  - **Code investigator**: inspects existing implementation patterns, related files, and impact scope
+  - **Validation reviewer**: checks test coverage, regression risk, and acceptance-criteria alignment after implementation
+- Do not assign multiple subagents to perform the same investigation unless there is a clear reason.
+- Before moving from **Step 2 to Step 3**, the parent agent must consolidate subagent findings and fix the implementation scope.
+- Before moving from **Step 5 to Step 6**, the parent agent must consolidate validation findings and resolve conflicts.
+- Do not use subagents for trivial single-file edits or obvious pattern-copy changes.
+- If delegation creates more coordination cost than implementation benefit, the parent agent should continue without subagents.
 
-### Step 3. 実装方針
+### Request format for subagents
 
-- 設計判断を箇条書きでまとめる
-  - 参照設計書との対応関係
-  - データモデル、インターフェース、ドメイン設計
-  - 例外、バリデーション、トランザクション
-  - 既存 API や DB との整合性
-- 迷いどころがあるなら代替案と採用理由を書く
-- 重大リスクがあるなら軽減策も書く
+At minimum, provide the following to each subagent:
 
-### Step 4. 変更内容
+- Target task ID
+- Task objective
+- Referenced design document(s)
+- Files or directories to inspect
+- Expected deliverable
+- Prohibited actions
+- How evidence should be shown
 
-- 変更ファイルごとに差分が分かる形で示す
-- 新規ファイルは全文を示す
-- 設定や SQL は既存の環境差分方針に合わせる
-- 必要な場合のみ最小限で以下も追加する
-  - マイグレーションや DDL
-  - 依存関係
-  - 例外やエラーレスポンス
-  - README や API 仕様
+Example requests:
 
-### Step 5. 検証手順
+- `Extract requirements, constraints, and acceptance criteria from the design documents for C-012`
+- `Investigate existing implementation patterns related to C-012 by controller / usecase / repository`
+- `Review the implementation diff for C-012 independently against the acceptance criteria`
 
-- ローカルでのビルド、テスト、起動、lint、format などのコマンドを書く
-- 期待結果と観察ポイントを書く
-- 必要に応じて境界値、異常系、性能、並行実行、互換性も確認する
+### Return format for subagents
 
-### Step 6. 受け入れ基準の自己チェック
+#### Investigation-oriented
 
-- 受け入れ基準ごとに `✅ / ❌` を付ける
-- 判定の根拠を短く書く
+- Investigation target
+- Files reviewed
+- Confirmed facts
+- Inferences
+- Unconfirmed points
+- Recommended actions
 
-## タスク完了時
+#### Design-comparison-oriented
 
-必要に応じて次も出す。
+- Requirement list
+- Constraint list
+- Acceptance criteria
+- Gaps from the existing implementation
+- Implementation cautions
 
-- コミットタスクの要約
-- レビュアー向け注意点
-- 次タスクへの引き継ぎメモ
--  `$ARGUMENTS` 更新結果
+#### Validation-oriented
 
-## 終了条件
+- Expected tests
+- Boundary cases
+- Failure cases
+- Regression risks
+- Missing checks
 
-- すべてのコミットタスクが完了し、 `$ARGUMENTS` 更新も反映済み
-- もしくは、未完了タスクがなく、 `$ARGUMENTS` 整合性も確認済み
+### How to handle subagent results
 
-## Claude Code での開始指示
+- Separate facts from inferences
+- Do not adopt weakly supported conclusions
+- If results conflict, the parent agent must re-check the design documents and code to resolve them
+- Even if uncertainty remains, the parent agent should proceed using the smallest reasonable assumption
+- The parent agent must summarize the adopted conclusions before implementation and before completion judgment
 
-このスキルを使ったら、次の順で進める。
+## Startup Procedure
 
-1. まず進捗確認を実施し、開始すべき `C-XXX` を宣言する
-2. そのタスクの参照設計書を実装前に読む
-3. そのタスクについて `Step 1. 参照設計書の確認 → Step 2. 事前確認 → Step 3. 実装方針 → Step 4. 変更内容 → Step 5. 検証手順 → Step 6. 自己チェック` を完了させる
-4. 完了したら `$ARGUMENTS` を更新し、次の `C-XXX` へ進む
-5. 全件完了していれば、整合性確認結果とあわせて終了する
+### 1. Progress Check
+
+At the start, always do the following:
+
+- Read `$ARGUMENTS` and classify each `C-XXX` as `Complete / Incomplete / Unknown`
+- Review the referenced design document(s) for each `C-XXX` and summarize the objective, constraints, and acceptance criteria
+- Check the branch, diff, related files, and test status to detect inconsistencies between `$ARGUMENTS` and the actual implementation state
+- If inconsistencies exist, resolve them with the minimum necessary evidence such as file presence or diffs
+
+Rules for choosing the starting commit task:
+
+- As a rule, start from the smallest incomplete `C-XXX`
+- If implementation is already done but not checked off, update the check first with evidence, then move on
+- If any task has unknown status, start there to determine its state
+- Do not break numeric order
+
+### 2. `$ARGUMENTS` Correction
+
+- If an unchecked item is clearly complete, mark it complete with evidence
+- If an item is checked but incomplete, keep the check as-is, leave a note about the inconsistency, and start from that task
+
+### 3. Initial Delegation Planning
+
+After selecting the target `C-XXX`, do the following if needed:
+
+- Delegate requirement extraction from the design documents to a subagent
+- Delegate investigation of existing implementation patterns to a subagent
+- Delegate impact analysis to a subagent
+- Delegate validation planning to a subagent if regression risk is non-trivial
+- The parent agent must then integrate the results and determine the final implementation scope
+
+## How to Process Each Commit Task
+
+As a rule, process each task in the following order.
+
+### Step 1. Review the Referenced Design Documents
+
+- Before implementation, always read the design document(s) linked to the commit task
+- Extract the scope, requirements, constraints, acceptance criteria, and any IDs or constants first
+- If there is a gap between the existing implementation and the design, organize it as an explicit issue at this stage
+- If needed, you may delegate the following to subagents:
+  - Requirement extraction
+  - Constraint extraction
+  - Gap identification against the existing implementation
+  - Acceptance criteria organization
+- The parent agent must integrate the extracted results and determine the conditions that must be satisfied in this task
+
+### Step 2. Pre-Implementation Check
+
+- Summarize the task objective and success condition in 1 to 3 lines
+- Summarize the relevant design document sections and the requirements that this implementation must satisfy
+- State the evidence that the task is incomplete, or the evidence that it is already complete and can be skipped
+- If it is already complete, only update `$ARGUMENTS` and move to the next task
+- Investigate and organize the following:
+  - Package structure
+  - Naming rules
+  - Exception design
+  - Logging policy
+  - DB and ORM policy
+  - Test policy
+- List the implementation points and impact scope related to the design documents
+- If needed, you may delegate the following to subagents:
+  - Investigation of existing implementation style
+  - Identification of related files
+  - Listing of impact scope
+  - Confirmation of incompleteness evidence
+- Before proceeding to Step 3, the parent agent must consolidate the findings and lock the target scope for this task
+
+### Step 3. Implementation Plan
+
+- Summarize design decisions in bullet points
+  - Mapping to the referenced design documents
+  - Data model, interfaces, and domain design
+  - Exceptions, validation, and transactions
+  - Consistency with existing APIs and DB
+- If there are decision points, write alternatives and the reason for the chosen option
+- If there are major risks, write mitigations
+- The parent agent must make the final implementation decision
+- If needed, only the comparison of alternatives may be delegated to a subagent, but the adoption decision must not be delegated
+
+### Step 4. Changes
+
+- Show changes in a way that makes the diff clear for each modified file
+- Show full contents for new files
+- Keep configuration and SQL aligned with the existing environment-difference policy
+- Add the following only when necessary and only in the minimum scope:
+  - Migrations or DDL
+  - Dependencies
+  - Exceptions or error responses
+  - README or API specifications
+- If the implementation is large, you may ask subagents to help with file-level investigation or diff review
+- However, final integration of the changes must be done by the parent agent
+- Do not expand the scope beyond what was fixed in Step 2 and Step 3 unless a blocking issue is found
+
+### Step 5. Validation Procedure
+
+- Write commands for local build, test, run, lint, format, and similar checks
+- Write the expected result and what to observe
+- When necessary, also check boundary values, failure cases, performance, concurrency, and compatibility
+- If needed, you may delegate the following to subagents:
+  - Identifying missing test perspectives
+  - Organizing checks against acceptance criteria
+  - Reviewing regression risks
+- Before proceeding to Step 6, the parent agent must consolidate validation findings and resolve open conflicts
+
+### Step 6. Self-Check Against Acceptance Criteria
+
+- For each acceptance criterion, mark `✅ / ❌`
+- Briefly state the basis for the judgment
+- If possible, add an independent review by a subagent that did not perform the implementation
+- In the independent review, check the following:
+  - Missed acceptance criteria
+  - Overlooked design-document mismatches
+  - Missing impact scope
+  - Insufficient testing
+- The final judgment must be made by the parent agent
+
+## When a Task Is Complete
+
+Include the following when necessary:
+
+- Summary of the commit task
+- Notes for reviewers
+- Handover memo for the next task
+- `$ARGUMENTS` update result
+- Summary integrating subagent results
+- Assumptions made in this task and why they were reasonable
+
+## Exit Conditions
+
+- All commit tasks are complete and `$ARGUMENTS` has been updated
+- Or there are no incomplete tasks and consistency of `$ARGUMENTS` has been confirmed
+
+## Startup Instructions for Claude Code
+
+When this skill is used, proceed in the following order:
+
+1. First, perform the progress check and declare which `C-XXX` should be started
+2. Read the referenced design document(s) for that task before implementation
+3. If needed, delegate requirement extraction, existing implementation investigation, impact analysis, and validation planning to subagents
+4. The parent agent integrates the subagent results and finalizes the implementation plan for that task
+5. Complete the following for that task: `Step 1. Review the Referenced Design Documents → Step 2. Pre-Implementation Check → Step 3. Implementation Plan → Step 4. Changes → Step 5. Validation Procedure → Step 6. Self-Check`
+6. After completion, update `$ARGUMENTS` and move to the next `C-XXX`
+7. If all tasks are complete, finish with the consistency check result

@@ -1,7 +1,7 @@
 ---
 name: review
 description: `main...HEAD` の差分だけを対象にコードレビューし、`docs/reviews/<review-title>.md` を作成するときに使う。`templates/review_list.md` または bundled reference の観点に従い、差分が導入したアクション可能な問題だけを重大度順に報告する。
-disable-model-invocation: true
+
 ---
 
 # Review

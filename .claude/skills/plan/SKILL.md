@@ -1,7 +1,6 @@
 ---
 name: plan
-description: Create or update `docs/implements_plan.md` from `templates/implements_plan.md` and the project design documents in `docs/`. Use this when the user asks for a project-wide implementation plan, team development strategy, dependency ordering, mock policy, phased implementation plan, rough role split, risk analysis, or change history grounded in existing documentation.
-disable-model-invocation: true
+description: Create or update `docs/implements_plan.md` from `templates/implements_plan.md` and the project design documents in `docs/`. Use this when the user asks for a project-wide implementation plan, dependency ordering, mock policy, phased implementation plan, or change history grounded in existing documentation.
 ---
 
 # Implementation Plan
@@ -26,15 +25,12 @@ Use this skill to produce a project-wide implementation plan in `docs/implements
 3. Inspect the files under `docs/` and identify which documents can be used as evidence.
 4. If `docs/implements_plan.md` already exists, review the current content and compare before overwriting it.
 5. Draft or update `1. 概要` from the design documents in `docs/`.
-6. Draft or update `2. 開発の進め方（チーム戦略）` from the design documents in `docs/`.
-7. Draft or update `3. 依存関係の整理（最重要）` from the design documents in `docs/`.
-8. Draft or update `4. モック方針（遷移先がスコープ外/未実装の場合）` from the design documents in `docs/`.
-9. Draft or update `5. フェーズ別 実装計画（セットアップ〜リリースまで）` from the design documents in `docs/`.
-10. In `Phase 2: データベーススキーマ完成`, create the plan as `1 table = 1 task`. Expand the table to match the number of tables in scope.
-11. Draft or update `6. 役割分担（ざっくり）` from the design documents in `docs/`.
-12. Draft or update `7. リスクと対策` from the design documents in `docs/`.
-13. Record the current creation or update timestamp in the change history and complete `8. 変更履歴`.
-14. Save the finished plan to `docs/implements_plan.md`.
+6. Draft or update `2. 依存関係の整理（最重要）` from the design documents in `docs/`.
+7. Draft or update `3. モック方針（遷移先がスコープ外/未実装の場合）` from the design documents in `docs/`.
+8. Draft or update `4. フェーズ別 実装計画（セットアップ〜リリースまで）` from the design documents in `docs/`.
+9. In `Phase 2: データベーススキーマ完成`, create the plan as `1 table = 1 task`. Expand the table to match the number of tables in scope.
+10. Record the current creation or update timestamp in the change history and complete `5. 変更履歴`.
+11. Save the finished plan to `docs/implements_plan.md`.
 
 ## Writing Rules
 

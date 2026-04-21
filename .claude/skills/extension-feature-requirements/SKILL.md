@@ -1,7 +1,7 @@
 ---
 name: extension-feature-requirements
 description: 既存ソースコードへの追加機能について、対話で要件を確定し、テンプレに沿った確定版指示書を作成する。追加機能の要件定義、曖昧点の解消、受け入れ条件とテスト観点の明確化を行うときに使う。
-disable-model-invocation: true
+
 ---
 
 # Extension Feature Requirements

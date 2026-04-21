@@ -2,7 +2,7 @@
 name: make-screen-testcase
 description: 指定された画面名について、`docs/` 配下の設計資料とテストテンプレートをもとに画面テスト計画書を作成する。画面単位のテスト観点整理、対象機能と対象外の明確化、テスト項目一覧、テストデータ、注意事項、リスク整理を行い、`docs/test/screen/screen_test_<画面名>.md` を出力するときに使う。
 argument-hint: 画面設計書を指定してください。例: `screen1.md` や `screen2.md`
-disable-model-invocation: true
+
 ---
 
 # Make Screen Testcase
