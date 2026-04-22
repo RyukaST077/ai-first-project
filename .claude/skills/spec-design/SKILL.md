@@ -2,7 +2,7 @@
 name: spec-design
 description: 承認済み要件から技術設計を確定させる一連の手順（ギャップ分析 → 技術設計生成 → 設計品質レビュー）をサブエージェントで並列化しながら実行するスキル。ユーザが「設計書を作って」「技術設計を作成」「設計を確定させて」などと言った場合に起動する。
 allowed-tools: Bash, Glob, Grep, LS, Read, Write, Edit, MultiEdit, WebSearch, WebFetch, Task
-argument-hint: <feature-name> [-y]
+argument-hint: <feature-name>
 ---
 
 # 技術設計パイプライン
@@ -12,7 +12,7 @@ argument-hint: <feature-name> [-y]
 - **全体フロー**（単線・戻りあり）:
 
   ```
-  [Phase 0] 前提読込・承認確認
+  [Phase 0] 前提読込
         ↓
   [Phase 1] ギャップ分析   ← サブエージェント並列
         ↓
@@ -20,7 +20,7 @@ argument-hint: <feature-name> [-y]
         ↓
   [Phase 3] 設計文書生成   ← 本体が統合して執筆
         ↓
-  [Phase 4] 品質レビュー   ← 独立サブエージェント + ユーザ対話
+  [Phase 4] 品質レビュー   ← 独立サブエージェント + 設計者視点サブエージェントの擬似対話
         ↓
    GO → 完了 / NO-GO → Phase 2 or 3 へ戻って再実行
   ```
@@ -37,11 +37,10 @@ argument-hint: <feature-name> [-y]
 | 位置 | 意味 | 例 |
 |------|------|-----|
 | `$1` | 機能名（日本語・英語いずれも可） | `ユーザーログイン` / `user-login` |
-| `$2` | `-y` フラグ（要件自動承認） | `-y` |
 
 - `$1` が日本語なら、Claude が英語 kebab-case スラッグ `<spec-name>` を自動決定する（`spec-requirements` と同じ規則）。
-- `-y` が付与された場合は、`spec.json` の `approvals.requirements.approved = true` に更新してから Phase 1 へ進む。
-- スキップ不可: Phase 1〜4 はすべて一連で実行する。ユーザが「ここまででいい」と停止要求を出すまで連続で進める。
+- **前提**: 本スキルを呼び出す時点で `requirements.md` は人間により承認済みであることを想定する。`spec.json` の `approvals.requirements.approved` の状態は **検証しない**（承認済みとして扱う）。
+- スキップ不可: Phase 1〜4 はすべて一連で**無人連続実行**する。途中でユーザ入力を待たず、完走後に結果を一括報告する。
 
 ## 出力先
 
@@ -55,7 +54,7 @@ argument-hint: <feature-name> [-y]
 ```
 
 - 親ディレクトリが存在しなければ作成する。
-- 既存 `gap-analysis.md` / `research.md` / `design.md` がある場合は、**差分要点を提示した上で上書き可否をユーザへ確認**（無断上書き禁止）。差分が小さい場合はマージモード（参照文脈）として扱う。
+- 既存 `gap-analysis.md` / `research.md` / `design.md` がある場合は、**差分要点を出力ログに記録した上で自動上書き**する。既存内容は参照文脈（マージモード）として取り込み、要点を新版に統合する（ユーザ確認は取らない）。
 
 <instructions>
 
@@ -65,7 +64,7 @@ argument-hint: <feature-name> [-y]
 
 ---
 
-## Phase 0: 前提読込・承認確認
+## Phase 0: 前提読込
 
 **1. コンテキスト一括読込**（並列 Read 可）:
 
@@ -88,11 +87,10 @@ argument-hint: <feature-name> [-y]
 - `$1` が日本語なら Claude が英語 kebab-case スラッグ `<spec-name>` を自動決定
 - 出力先ディレクトリが無ければ作成、既存ファイル衝突は上書き確認
 
-**3. 要件承認の検証**:
+**3. 入力健全性チェック**:
 
-- `$2 == "-y"` の場合: `spec.json.approvals.requirements.approved = true` に更新して続行
-- 未承認かつ `-y` 無しの場合: 実行停止し `「-y で要件を自動承認すれば続行できます」` と案内
 - `requirements.md` に数値 ID が無い／英字ラベル（"Requirement A" 等）が含まれる場合: 停止し `/spec-requirements` で修正を依頼
+- 承認状態（`approvals.requirements.approved`）は検証しない。**本スキル呼び出し時点で requirements は承認済みである前提**で続行する
 
 ---
 
@@ -115,7 +113,7 @@ argument-hint: <feature-name> [-y]
 - `reference/gap-analysis.md` のフレームワーク（Current State / Feasibility / Options A-B-C / Out-of-Scope / Complexity & Risk / Output Checklist）に沿って `.memory-bank/specs/<spec-name>/gap-analysis.md` を生成／更新
 - 複数の実装アプローチ（拡張 / 新規 / ハイブリッド）をトレードオフ付きで提示
 - 追加調査が必要な領域を「Phase 2 の調査項目」として明示化
-- ユーザに **簡易確認**（「この方針で Phase 2 の調査に進んでよいか？」）を取る。修正要望があれば gap-analysis を更新してから進む。
+- **方針妥当性の独立チェック**（サブエージェント `planner`）: gap-analysis.md を渡し、「実装アプローチ候補（拡張 / 新規 / ハイブリッド）のトレードオフが妥当か」「Phase 2 の調査項目に抜けはないか」を評価させる。メインエージェントが結果を受けて、必要なら gap-analysis を自動更新してから Phase 2 へ進む（ユーザ確認は取らない）。
 
 ---
 
@@ -202,7 +200,7 @@ argument-hint: <feature-name> [-y]
 
 ## Phase 4: 品質レビュー（GO/NO-GO 判定）
 
-**目的**: `design.md` の実装準備完了度を、独立視点のサブエージェント + ユーザ対話で判定する。
+**目的**: `design.md` の実装準備完了度を、独立視点のサブエージェント（V1 レビュア）と設計者視点サブエージェント（V3）の擬似対話を経て、メインエージェントが単独で判定する。
 
 **1. 独立レビュー（サブエージェント）**:
 
@@ -213,25 +211,29 @@ argument-hint: <feature-name> [-y]
 - **V2. 要件トレーサビリティ照合**: `Explore`（thoroughness: quick）
   - プロンプト: 「`requirements.md` の全数値 ID が `design.md` 内で参照されているか、参照漏れ／創作 ID が無いかを照合して報告。」
 
-**2. 本体処理（ユーザ対話重視）**:
+**2. 本体処理（サブエージェント間の擬似対話 → メインエージェント単独判定）**:
 
-- サブエージェント結果を本体で整理
-- **ユーザへ重要課題を 1 件ずつ提示** し、意見を聞きながら合意形成（一方通行禁止）
-- 合意した改善案を記録
-- 全課題について合意が取れた段階で、`reference/design-review.md` の Output Format に従って最終評価を出力:
+- V1 / V2 の結果をメインエージェントで整理し、最重要課題（最大 3 件）を抽出
+- **V3. 設計者視点サブエージェント** を起動（`architect`）: V1 の重要課題 1 件ずつに対し、「設計意図の説明／代替案提示／反駁根拠」の立場で応答させる
+  - プロンプト例: 「`.memory-bank/specs/<spec-name>/design.md` の設計者として、以下の Critical Issue に応答せよ。合意する場合は改善案を、合意しない場合は設計意図と反駁根拠を、各 5-7 行で返せ。`requirements.md` および `research.md` の該当箇所を根拠として引用すること。」
+- メインエージェントが **V1（レビュア）と V3（設計者）の応答をマージ・調停** し、課題ごとに次のいずれかを自動決定:
+  - **合意**: 改善案を `design.md` へ自動反映（Phase 3 の書き出しに戻って再生成）
+  - **受容**: リスク受容として `spec.json.risk_acceptance` に記録して続行
+  - **先送り**: `research.md` の「未決事項」節へ退避して続行
+- 調停結果を `reference/design-review.md` の Output Format に従って最終評価として出力:
   1. **Design Review Summary**（2〜3 文）
-  2. **Critical Issues**（最大 3 件、各 5〜7 行、Traceability ＋ Evidence 必須）
+  2. **Critical Issues**（最大 3 件、各 5〜7 行、Traceability ＋ Evidence ＋ V3 設計者応答 ＋ 調停結果）
   3. **Design Strengths**（1〜2 件）
   4. **Final Assessment**: **GO** / **NO-GO**、Rationale、Next Steps
-  5. **Interactive Discussion**: 設計者の観点・代替案・必要な変更について対話
-- 全体で約 400 語を目安（`design-review.md` の Length & Focus）
+- 全体で約 500 語を目安（サブエージェント対話分を含む）
+- **ユーザ入力は一切待たない**。判定はメインエージェントが単独で下す
 
 **3. 判定後の処理**:
 
 - **GO**:
   - `spec.json.approvals.design.approved = true` に更新
   - `updated_at` を更新
-  - 次アクションとして `/spec-tasks <feature> -y` を案内して終了
+  - 次アクションとして `/spec-tasks <feature>` を案内して終了
 - **NO-GO**:
   - 重要課題のうち「再調査が必要」なものは **Phase 2 へ戻る**
   - 「設計文書の修正のみで解消」なものは **Phase 3 へ戻る**
@@ -250,7 +252,7 @@ argument-hint: <feature-name> [-y]
 - **要件トレーサビリティ ID**: 数値 ID のみを正確に転記（創作・英字ラベル禁止）
 - **ギャップ分析は決定しない**: 最終判断は Phase 3 で行う
 - **レビューは完全性より品質保証**: 許容可能なリスクは受け入れ、最重要 3 件に絞る
-- **レビューは対話**: 一方通行評価禁止
+- **レビューは対話**: サブエージェント間（V1 レビュア ↔ V3 設計者視点）の擬似対話を経てメインエージェントが単独で調停・判定する（ユーザ対話を介さない）
 - **サブエージェント分担**:
   - 独立タスクは **必ず 1 メッセージで並列起動**
   - 各プロンプトは**自己完結**（本会話の文脈を知らない前提）
@@ -296,7 +298,6 @@ argument-hint: <feature-name> [-y]
 
 **Phase 0**:
 
-- **要件未承認かつ `-y` 無し**: 停止。`-y` 付与または手動承認を促す
 - **不正な要件 ID**: 停止し、`/spec-requirements` で数値 ID への修正を依頼
 
 **Phase 1**:
@@ -309,18 +310,18 @@ argument-hint: <feature-name> [-y]
 
 **Phase 3**:
 
-- **既存 design.md と差分が大きい**: 差分要点を提示して上書き可否を確認
+- **既存 design.md と差分が大きい**: 差分要点を出力ログに記録した上で自動上書き（ユーザ確認は取らない）
 
 **Phase 4**:
 
 - **重要課題が 3 件を超える**: 最重要 3 件に絞り、残りは `research.md` の「未決事項」節へ退避
-- **ユーザが GO を主張するが Blocker 残存**: NO-GO 推奨を明示し、受容する場合はリスク受容として `spec.json` に記録
+- **Blocker 残存**: メインエージェントは自動的に NO-GO を選択。V3 設計者視点サブエージェントが受容を主張した場合でも、Blocker が要件トレーサビリティ・型安全性など必須項目に触れていれば NO-GO を優先する。受容可能と判断したリスクのみ `spec.json.risk_acceptance` に記録して GO とする
 
 ### 出力先既存ファイル
 
-- 既存 `gap-analysis.md` / `research.md` / `design.md` がある場合は**差分要点を提示**し、**上書き可否をユーザに確認**（自動上書き禁止）
+- 既存 `gap-analysis.md` / `research.md` / `design.md` がある場合は、差分要点を出力ログに記録した上で**自動上書き**する（ユーザ確認は取らない）
 
 ### 次フェーズ（本スキル完了後）
 
-- **Phase 4 で GO**: `/spec-tasks <feature> -y` で実装タスク生成へ
+- **Phase 4 で GO**: `/spec-tasks <feature>` で実装タスク生成へ
 - **Phase 4 で NO-GO**: 重要課題を反映し、Phase 2 or 3 へ戻って本スキル内で再実行
