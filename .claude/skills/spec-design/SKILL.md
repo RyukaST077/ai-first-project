@@ -73,14 +73,14 @@ argument-hint: <feature-name>
 - `.memory-bank/specs/<spec-name>/gap-analysis.md`, `research.md`, `design.md`（存在すればマージ文脈）
 - `.memory-bank/steering/` 全体（`productContext.md` / `projectBrief.md` / `systemPatterns.md` / `techContext.md` ＋カスタム steering）
 - テンプレート: `.memory-bank/specs/design.md`（設計骨格）, `.memory-bank/specs/research.md`（調査ログ骨格）
-- 本スキル同梱の `reference/` 全ファイル:
-  - `reference/gap-analysis.md`（Phase 1 の分析フレームワーク）
-  - `reference/design-discovery-full.md`（Phase 2: 新規・複雑統合の調査）
-  - `reference/design-discovery-light.md`（Phase 2: 拡張機能の軽量調査）
-  - `reference/design-synthesis.md`（Phase 2 終盤: Generalization / Build vs Adopt / Simplification）
-  - `reference/design-principles.md`（Phase 3 の設計原則・セクション記法）
-  - `reference/design-review-gate.md`（Phase 3→4 の機械的ゲートチェック）
-  - `reference/design-review.md`（Phase 4 のレビュー基準・出力形式）
+- 本スキル同梱の `.claude\skills\spec-requirements\reference/` 全ファイル:
+  - `.claude\skills\spec-requirements\reference/gap-analysis.md`（Phase 1 の分析フレームワーク）
+  - `.claude\skills\spec-requirements\reference/design-discovery-full.md`（Phase 2: 新規・複雑統合の調査）
+  - `.claude\skills\spec-requirements\reference/design-discovery-light.md`（Phase 2: 拡張機能の軽量調査）
+  - `.claude\skills\spec-requirements\reference/design-synthesis.md`（Phase 2 終盤: Generalization / Build vs Adopt / Simplification）
+  - `.claude\skills\spec-requirements\reference/design-principles.md`（Phase 3 の設計原則・セクション記法）
+  - `.claude\skills\spec-requirements\reference/design-review-gate.md`（Phase 3→4 の機械的ゲートチェック）
+  - `.claude\skills\spec-requirements\reference/design-review.md`（Phase 4 のレビュー基準・出力形式）
 
 **2. spec-name 決定**:
 
@@ -110,7 +110,7 @@ argument-hint: <feature-name>
 **本体処理**:
 
 - サブエージェント 3 つの結果を集約
-- `reference/gap-analysis.md` のフレームワーク（Current State / Feasibility / Options A-B-C / Out-of-Scope / Complexity & Risk / Output Checklist）に沿って `.memory-bank/specs/<spec-name>/gap-analysis.md` を生成／更新
+- `.claude\skills\spec-requirements\reference/gap-analysis.md` のフレームワーク（Current State / Feasibility / Options A-B-C / Out-of-Scope / Complexity & Risk / Output Checklist）に沿って `.memory-bank/specs/<spec-name>/gap-analysis.md` を生成／更新
 - 複数の実装アプローチ（拡張 / 新規 / ハイブリッド）をトレードオフ付きで提示
 - 追加調査が必要な領域を「Phase 2 の調査項目」として明示化
 - **方針妥当性の独立チェック**（サブエージェント `planner`）: gap-analysis.md を渡し、「実装アプローチ候補（拡張 / 新規 / ハイブリッド）のトレードオフが妥当か」「Phase 2 の調査項目に抜けはないか」を評価させる。メインエージェントが結果を受けて、必要なら gap-analysis を自動更新してから Phase 2 へ進む（ユーザ確認は取らない）。
@@ -123,8 +123,8 @@ argument-hint: <feature-name>
 
 **1. 機能タイプ分類**:
 
-- 新規機能（グリーンフィールド）・複雑統合 → `reference/design-discovery-full.md` に従う（full discovery）
-- 拡張（既存システム）→ `reference/design-discovery-light.md` に従う（light discovery）
+- 新規機能（グリーンフィールド）・複雑統合 → `.claude\skills\spec-requirements\reference/design-discovery-full.md` に従う（full discovery）
+- 拡張（既存システム）→ `.claude\skills\spec-requirements\reference/design-discovery-light.md` に従う（light discovery）
 - 単純追加（CRUD/UI）→ minimal（本体で Grep/Read を 1〜2 箇所確認して完了）
 - light 実施中に「大規模アーキ変更・複雑統合・セキュリティ・性能」要素が見つかったら `design-discovery-light.md` の "When to Escalate to Full Discovery" に従い full へ昇格
 
@@ -147,7 +147,7 @@ argument-hint: <feature-name>
 - 各トピックに**情報源・示唆・設計への影響**を明記
 - 記述言語は `spec.json` 指定に従う（未指定なら `en`）
 
-**4. Design Synthesis**（`reference/design-synthesis.md` に従い、**並列化せず本体で実施**）:
+**4. Design Synthesis**（`.claude\skills\spec-requirements\reference/design-synthesis.md` に従い、**並列化せず本体で実施**）:
 
 - **Generalization**: 複数要件の共通構造を抽出し、汎用化すべきインターフェースを特定。実装範囲は現要件に限定し、インターフェースだけ汎化
 - **Build vs Adopt**: 主要コンポーネントごとに、RFC / 既存ライブラリ / プラットフォーム機能で代替可能か評価。採用時は保守状況・スタック整合・NFR 満足を確認。自作時は却下理由を `research.md` に記録
@@ -160,7 +160,7 @@ argument-hint: <feature-name>
 
 **目的**: Phase 1〜2 の成果を統合し、`design.md` を生成する。**本体が執筆する**（サブエージェントには書かせない）。
 
-**1. ドラフト執筆**（`reference/design-principles.md` を厳密適用）:
+**1. ドラフト執筆**（`.claude\skills\spec-requirements\reference/design-principles.md` を厳密適用）:
 
 - `.memory-bank/specs/design.md` の骨格に**厳密準拠**（見出し階層・番号・プレースホルダ構造を逸脱しない）
 - 収集情報（API 契約、採用技術、既存パターン）をコンポーネント定義・設計判断・統合ポイントへ統合
@@ -174,7 +174,7 @@ argument-hint: <feature-name>
 - 章「Architecture」「File Structure Plan」「Components & Interface Contracts」は `research.md` の裏付けを参照
 - 既存 `design.md` があればマージモード（差分提示 → 上書き確認）
 
-**2. Design Review Gate**（書き出し前の機械的ゲート、`reference/design-review-gate.md` に従う）:
+**2. Design Review Gate**（書き出し前の機械的ゲート、`.claude\skills\spec-requirements\reference/design-review-gate.md` に従う）:
 
 本体で以下をドラフトに対して実施。**失敗したら修復して再実行**。最大 2 pass。
 
@@ -207,7 +207,7 @@ argument-hint: <feature-name>
 以下を **並列起動**:
 
 - **V1. アーキテクチャ独立レビュー**: `architect`（または `code-reviewer`）
-  - プロンプト: 「`.memory-bank/specs/<spec-name>/design.md` と `requirements.md` を独立視点でレビューせよ。`reference/design-review.md` の Core Review Criteria（Existing Architecture Alignment / Design Consistency & Standards / Extensibility & Maintainability / Type Safety & Interface Design）に従い、**最重要課題を最大 3 件**、設計の強みを 1〜2 件挙げよ。各課題は `🔴 Critical Issue [n]: Title / Concern / Impact / Suggestion / Traceability (requirements.md の ID) / Evidence (design.md のセクション)` のフォーマットで報告。全体の GO/NO-GO 案と根拠も添えよ。」
+  - プロンプト: 「`.memory-bank/specs/<spec-name>/design.md` と `requirements.md` を独立視点でレビューせよ。`.claude\skills\spec-requirements\reference/design-review.md` の Core Review Criteria（Existing Architecture Alignment / Design Consistency & Standards / Extensibility & Maintainability / Type Safety & Interface Design）に従い、**最重要課題を最大 3 件**、設計の強みを 1〜2 件挙げよ。各課題は `🔴 Critical Issue [n]: Title / Concern / Impact / Suggestion / Traceability (requirements.md の ID) / Evidence (design.md のセクション)` のフォーマットで報告。全体の GO/NO-GO 案と根拠も添えよ。」
 - **V2. 要件トレーサビリティ照合**: `Explore`（thoroughness: quick）
   - プロンプト: 「`requirements.md` の全数値 ID が `design.md` 内で参照されているか、参照漏れ／創作 ID が無いかを照合して報告。」
 
@@ -220,7 +220,7 @@ argument-hint: <feature-name>
   - **合意**: 改善案を `design.md` へ自動反映（Phase 3 の書き出しに戻って再生成）
   - **受容**: リスク受容として `spec.json.risk_acceptance` に記録して続行
   - **先送り**: `research.md` の「未決事項」節へ退避して続行
-- 調停結果を `reference/design-review.md` の Output Format に従って最終評価として出力:
+- 調停結果を `.claude\skills\spec-requirements\reference/design-review.md` の Output Format に従って最終評価として出力:
   1. **Design Review Summary**（2〜3 文）
   2. **Critical Issues**（最大 3 件、各 5〜7 行、Traceability ＋ Evidence ＋ V3 設計者応答 ＋ 調停結果）
   3. **Design Strengths**（1〜2 件）
@@ -268,7 +268,7 @@ argument-hint: <feature-name>
 ## ツールガイダンス
 
 - **並列化を第一に**: 独立した調査・レビューは **1 メッセージで複数 Task 並列起動**
-- **最初に読み込む**: Phase 0 で spec / steering / templates / reference を一括読込
+- **最初に読み込む**: Phase 0 で spec / steering / templates / .claude\skills\spec-requirements\reference を一括読込
 - **不確実なら調査**: 外部依存・API は WebSearch/WebFetch または `docs-lookup` で補強
 - **最後に書き込む**: 各 Phase の分析・合意が固まってから `gap-analysis.md` / `research.md` / `design.md` を書き出す
 

@@ -42,7 +42,7 @@ argument-hint: <feature-name> <design-doc-path>
 ```
 
 - `<spec-name>`: `$1` から導出する英語 kebab-case スラッグ（例: `ユーザーログイン` → `user-login`）。Claude が自動決定する。
-- 出力ファイルの**書式は `reference/requirements.md` に厳密準拠**する（見出し階層・番号付け・プレースホルダ構造を逸脱しない）。
+- 出力ファイルの**書式は `.claude\skills\spec-requirements\reference/requirements.md` に厳密準拠**する（見出し階層・番号付け・プレースホルダ構造を逸脱しない）。
 - 親ディレクトリ `.memory-bank/specs/<spec-name>/` が存在しない場合は作成する。
 - 出力先に既存ファイルがある場合は**上書き前にユーザへ確認**する（無断で上書きしない）。
 
@@ -57,8 +57,8 @@ argument-hint: <feature-name> <design-doc-path>
      - これにより、完全なプロジェクト記憶と文脈を得る
 
 2. **ガイドライン読込**:
-   - `reference/ears-format.md` を読み、EARS 構文ルールを確認
-   - `reference/requirements.md` を読み、文書構造を確認
+   - `.claude\skills\spec-requirements\reference/ears-format.md` を読み、EARS 構文ルールを確認
+   - `.claude\skills\spec-requirements\reference/requirements.md` を読み、文書構造を確認
 
 3. **要件生成**:
    - プロジェクト説明から初期要件を作成
@@ -69,7 +69,7 @@ argument-hint: <feature-name> <design-doc-path>
    - `$1` が日本語なら、内容を解釈して英語 kebab-case スラッグ `<spec-name>` を決定（例: `ユーザーログイン` → `user-login`）
    - 出力先ディレクトリ `.memory-bank/specs/<spec-name>/` を確認・作成
    - 既存の `requirements.md` があれば上書き確認をユーザに取る
-   - `reference/requirements.md` のテンプレート骨格に要件本文を流し込み、`.memory-bank/specs/<spec-name>/requirements.md` として保存
+   - `.claude\skills\spec-requirements\reference/requirements.md` のテンプレート骨格に要件本文を流し込み、`.memory-bank/specs/<spec-name>/requirements.md` として保存
 
 ## 重要な制約
 - HOW ではなく WHAT に集中（実装詳細を含めない）
@@ -77,7 +77,7 @@ argument-hint: <feature-name> <design-doc-path>
 - EARS 文の主語は適切に選択（ソフトウェアでは system/service 名）
 - まず初版を生成し、その後ユーザーフィードバックで反復（最初に連続質問しない）
 - requirements.md の要件見出しは、先頭に数値 ID を必ず含める（例: "Requirement 1", "1.", "2 Feature ..."）。"Requirement A" のような英字 ID は不可。
-- 出力ファイルは `reference/requirements.md` の見出し階層・番号付け・プレースホルダ配置を逸脱しない
+- 出力ファイルは `.claude\skills\spec-requirements\reference/requirements.md` の見出し階層・番号付け・プレースホルダ配置を逸脱しない
 </instructions>
 
 

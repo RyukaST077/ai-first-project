@@ -60,10 +60,10 @@ argument-hint: <feature-name>
 - `.memory-bank/specs/<spec-name>/gap-analysis.md`, `research.md`（存在すれば参考）
 - `.memory-bank/steering/` 全体（`productContext.md` / `projectBrief.md` / `systemPatterns.md` / `techContext.md` ＋カスタム steering）
 - テンプレート: `.memory-bank/specs/tasks.md`（タスク骨格）
-- 本スキル同梱の `reference/` 全ファイル:
-  - `reference/tasks-generation.md`（生成原則・レビューゲート）
-  - `reference/tasks-parallel-analysis.md`（`(P)` 判定基準）
-  - `reference/tasks-template.md`（`(P)` マーカー対応フォーマット）
+- 本スキル同梱の `.claude\skills\spec-requirements\reference/` 全ファイル:
+  - `.claude\skills\spec-requirements\reference/tasks-generation.md`（生成原則・レビューゲート）
+  - `.claude\skills\spec-requirements\reference/tasks-parallel-analysis.md`（`(P)` 判定基準）
+  - `.claude\skills\spec-requirements\reference/tasks-template.md`（`(P)` マーカー対応フォーマット）
 
 **2. spec-name 決定**:
 
@@ -80,7 +80,7 @@ argument-hint: <feature-name>
 
 ### Phase 1: タスクプランのドラフト作成
 
-**目的**: `reference/tasks-generation.md` のすべての原則を適用し、`tasks.md` のドラフトを内部的に組み立てる。書き出しは Phase 3。
+**目的**: `.claude\skills\spec-requirements\reference/tasks-generation.md` のすべての原則を適用し、`tasks.md` のドラフトを内部的に組み立てる。書き出しは Phase 3。
 
 **1. 要件とコンポーネントの棚卸し**:
 
@@ -88,7 +88,7 @@ argument-hint: <feature-name>
 - `design.md` から全コンポーネント／インターフェース契約／統合ポイント／ NFR 検証項目を抽出
 - 既存 `tasks.md` があれば、残作業・変更点・廃止項目を識別
 
-**2. タスク分解**（`reference/tasks-generation.md` の Core Principles に厳密準拠）:
+**2. タスク分解**（`.claude\skills\spec-requirements\reference/tasks-generation.md` の Core Principles に厳密準拠）:
 
 - **Task Ordering**: Foundation → Core → Integration → Validation の順で並べる
 - **最大 2 階層**: メジャータスク（1, 2, 3...）とサブタスク（1.1, 1.2, ...）のみ。3 階層以上禁止
@@ -102,7 +102,7 @@ argument-hint: <feature-name>
 
 **3. 並列タスク識別**:
 
-- `reference/tasks-parallel-analysis.md` の 5 条件をすべて満たすタスクに `(P)` を付与
+- `.claude\skills\spec-requirements\reference/tasks-parallel-analysis.md` の 5 条件をすべて満たすタスクに `(P)` を付与
   1. 保留中タスクへのデータ依存がない
   2. 共有可変リソースやファイルが衝突しない
   3. 他タスクのレビュー／承認を事前要求しない
@@ -153,7 +153,7 @@ argument-hint: <feature-name>
 
 **1. tasks.md 書き出し**:
 
-- `reference/tasks-template.md` のフォーマットに厳密準拠して `.memory-bank/specs/<spec-name>/tasks.md` を書き出す
+- `.claude\skills\spec-requirements\reference/tasks-template.md` のフォーマットに厳密準拠して `.memory-bank/specs/<spec-name>/tasks.md` を書き出す
 - 記述言語は `spec.json` 指定に従う（未指定なら `en`）
 - 既存 `tasks.md` がある場合は、上書き確認済みの前提でマージ結果を書き出す
 
@@ -169,7 +169,7 @@ argument-hint: <feature-name>
 
 ## 重要な制約
 
-- **ルール厳守**: `reference/tasks-generation.md` の原則はすべて必須
+- **ルール厳守**: `.claude\skills\spec-requirements\reference/tasks-generation.md` の原則はすべて必須
 - **自然言語**: コード構造・ファイル名・関数名ではなく「何をするか」を記述
 - **完全網羅**: `requirements.md` の全数値 ID と `design.md` の全コンポーネントをタスクへ対応付ける
 - **最大 2 階層**: メジャータスクとサブタスクのみ（3 階層以上禁止）
@@ -184,7 +184,7 @@ argument-hint: <feature-name>
 
 ## ツールガイダンス
 
-- **最初に読み込む**: Phase 0 で spec / steering / templates / reference を一括読込
+- **最初に読み込む**: Phase 0 で spec / steering / templates / .claude\skills\spec-requirements\reference を一括読込
 - **最後に書き込む**: Phase 1〜2 のドラフト・レビューが固まってから Phase 3 で `tasks.md` と `spec.json` を書き出す
 - **Grep / Glob 活用**: `requirements.md` の数値 ID 抽出、`design.md` のコンポーネント抽出で使用
 
@@ -227,7 +227,7 @@ argument-hint: <feature-name>
 
 **テンプレート／ルール欠如**:
 - メッセージ: 「`.memory-bank/specs/tasks.md` テンプレートが見つかりません」
-- フォールバック: `reference/tasks-template.md` を直接使用（警告付き）
+- フォールバック: `.claude\skills\spec-requirements\reference/tasks-template.md` を直接使用（警告付き）
 - 推奨: 「リポジトリ設定を確認するか、テンプレートを復元してください」
 
 **出力先既存ファイル**:
